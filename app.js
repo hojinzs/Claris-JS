@@ -3,7 +3,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname + '/view/io.html');
+    res.sendFile(__dirname + '/view/index.html');
 });
 
 io.on('connection', function(socket){
