@@ -11,19 +11,78 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
+
+      #nicknamePopup{
+        padding:20px; 
+        border:4px solid #ddd; 
+        position:absolute; 
+        left:100px; 
+        top:100px; 
+        background:#fff;
+      }
     </style>
   </head>
   
   <body>
+    <!-- todo : 참여인원 카운트 영역 -->
+    <div<>
+      현재접속인원 : <span>0</span>명
+    </div>
+    <!-- 메시지 영역 -->
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+
+    <!-- 채팅 참여 전 보여질 영역 -->
+    <div id="infoArea" style="position:fixed; bottom:0px;">
+      <span>채팅에 참여하려면 <a href="#" id="openLayer">여기</a>를 클릭하십시오.</span>
+    </div>
+    
+    <!-- 메시지 입력 영역 -->
+    <div id="inputArea">
+      <form action="">
+        <input id="m" autocomplete="off" /><button>전송</button>
+      </form>
+    </div>
+
+    <!-- 닉네임 입력 레이어팝업 -->
+    <div id="nicknamePopup">
+      <span>닉네임(최대 5글자) : </span>
+      <input id="nickname" name="nickname" maxlength="5" size="8px">
+      <button id="joinBtn">참여하기</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
         $(function () {
             var socket = io();
+            var userNickname = "";
+            var _userNickname = "";
+
+            if(userNickname.length < 1) {
+              $('#inputArea').hide();
+              $('#nicknamePopup').hide();
+            }
+
+            $('#openLayer').click(function() {
+              $('#nicknamePopup').show();
+              $('#nickname').focus();
+            });
+
+            $('#joinBtn').click(function() {
+              _userNickname = $('#nickname').val();
+
+              if(_userNickname.length < 1) {
+                alert('닉네임을 입력하지 않았습니다.');
+                return;
+              }
+
+              $('#userNickname').val(_userNickname);
+              $('#nicknamePopup').hide();
+              $('#infoArea').hide();
+              $('#inputArea').show();
+              $('#m').focus();
+            });
+
             $('form').submit(function(e){
                 e.preventDefault(); // prevents page reloading
                 socket.emit('chat message', $('#m').val());
@@ -31,9 +90,9 @@
                 return false;
             });
             socket.on('chat message', function(msg){
-                $('#messages').append($('<li class="red">').text(msg));
+                $('#messages').append($('<li class="red">').text(_userNickname + ' : ' + msg));
             });
         });
-        </script>
+    </script>
   </body>
 </html>
