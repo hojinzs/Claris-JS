@@ -28,7 +28,6 @@
         <!-- Vue JS Components -------->
         <!-- 컴포넌트 구조 ---------------->
         <!-- <ChatApp(#application)> -->
-        <!-- ㄴ <welcome-msg>         -->
         <!-- ㄴ <live-users>          -->
         <!-- ㄴ <chat-dialog>         -->
         <!-- ㄴ <message-input>       -->
@@ -75,7 +74,6 @@
             Vue.component('message-input',{
                 template: '#message-input-template',
                 props: {
-                    visible: {type: Boolean, default() {return true;}},
                     defaultText: {type:String, default() {return 'default-text'}},
                     disabled: {type: Boolean, default() {return false;}},
                     placeHolder: {type:String, default() {return 'default-placeholder'}},
@@ -172,7 +170,6 @@
             data: {
                 liveuser : 0,
                 messageList : [],
-                currentInput : 'messageInput',
                 messageInput : {
                     disabled : true,
                     default : "",
@@ -186,7 +183,7 @@
                     popupMessage : "닉네임을 입력해주세요"
                 },
                 user : "",
-                mode : "user"
+                mode : "user",
             },
             mounted: function(){
                 Chat.on(this.receive);
@@ -198,8 +195,7 @@
                 },
                 setUser: function(value){
                     Chat.setNickname(value);
-                    console.log(this);
-                    console.log(this.$data);
+                    this.$data.user = value;
                     this.$data.mode = 'chat';
                     this.$data.messageInput.disabled = false;
                 },
