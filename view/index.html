@@ -198,6 +198,10 @@
                     this.$data.user = value;
                     this.$data.mode = 'chat';
                     this.$data.messageInput.disabled = false;
+                    this.messageList.push({
+                        who : "(system)",
+                        text : "당신의 닉네임은"+this.$data.user+"입니다.",
+                    })
                 },
                 receive: function(response){
                     this.messageList.push({
