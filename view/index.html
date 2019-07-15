@@ -5,9 +5,6 @@
         <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font: 13px Helvetica, Arial; }
-        form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
         #messages { list-style-type: none; margin: 0; padding: 0; }
         #messages li { padding: 5px 10px; }
         #messages li:nth-child(odd) { background: #eee; }
@@ -26,21 +23,20 @@
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" id="vue.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" id="socket.io"></script>
         <script src="./static/chat.js" id="claris.chat.js"></script>
-        <script src="https://code.jquery.com/jquery-1.11.1.js" id=jQuery></script>
 
-        <!----------------------->
-        <!-- Vue JS Components -->
-        <!-- 컴포넌트 구조 --------->
-        <!-- <app>             -->
-        <!-- ㄴ <welcome-msg>   -->
-        <!-- ㄴ <live-users>    -->
-        <!-- ㄴ <chat-dialog>   -->
-        <!-- ㄴ <message-input> -->
-        <!----------------------->
+        <!----------------------------->
+        <!-- Vue JS Components -------->
+        <!-- 컴포넌트 구조 ---------------->
+        <!-- <ChatApp(#application)> -->
+        <!-- ㄴ <welcome-msg>         -->
+        <!-- ㄴ <live-users>          -->
+        <!-- ㄴ <chat-dialog>         -->
+        <!-- ㄴ <message-input>       -->
+        <!------------------------------>
 
         <!-- 현재 접속 인원 카운트 컴포넌트 :: <live-users> -->
         <script type="text/x-template" id="live-users-template">
-            <div>
+            <div id="live-users">
                 현재접속인원 : <span>{{ counter }}</span>명
             </div>
         </script>
@@ -50,6 +46,10 @@
                 props: ['counter'],
             })
         </script>
+        <style id="live-users-style">
+            #live-users {top:0};
+        </style>
+        <!-- END <live-users> -->
 
         <!-- 대화 내용컴포넌트 :: <chat-dialog> -->
         <script type="text/x-template" id="chat-dialog-template">
@@ -62,74 +62,62 @@
             })
         </script>
 
-        <!-- 채팅 참여 전 웰컴 메시지 :: <welcome-msg> -->
-        <script type="text/x-template" id="welcome-msg-template">
-            <div id="infoArea" style="position:fixed; bottom:0px;">
-                <span>채팅에 참여하려면 <a href="#" id="openLayer">여기</a>를 클릭하십시오.</span>
-            </div>
-        </script>
-        <script id="welcome-msg-script">
-            Vue.component('welcome-msg',{
-                template: '#welcome-msg-template'
-            })
-        </script>
-
         <!-- 메시지 입력 영역 :: <message-input> -->
         <script type="text/x-template" id="message-input-template">
-            <!-- <div id="inputArea">
-                <form action="">
-                    <input id="m" autocomplete="off" /><button>전송</button>
-                </form>
-            </div> -->
             <div id="message-input">
-                <form v-on:submit.prevent="go">
-                    <input v-model:value="text" id="m" autocomplete="off" /><button>전송</button>
+                <div class="popup"> {{ popupMessage }} </div>
+                <form v-on:submit.prevent="submit">
+                    <input :placeholder="placeHolder" v-model:value="text" id="m" autocomplete="off" :disabled="disabled" /><button :disabled="disabled">전송</button>
                 </form>
             </div>
         </script>
         <script id="message-input-script">
             Vue.component('message-input',{
                 template: '#message-input-template',
+                props: {
+                    visible: {type: Boolean, default() {return true;}},
+                    defaultText: {type:String, default() {return 'default-text'}},
+                    disabled: {type: Boolean, default() {return false;}},
+                    placeHolder: {type:String, default() {return 'default-placeholder'}},
+                    popupMessage: {type:String, default() {return'default-popup-message'}},
+                },
                 data: function(){
                     return {
-                        text: "",
+                        text: this.defaultText,
+
                     }
                 },
                 methods: {
-                    go(){
+                    submit(){
                         console.log(this.text);
-                        this.$emit('submit',this.text);
+                        if(this.validation(this.text)){
+                            this.$emit('submit',this.text);
+                        } else {
+                            alert("validation fail")
+                        }
                         this.text = "";
+                    },
+                    validation(value){
+                        console.log(this.$emit('validation'));
+                        this.$emit('validation',value);
+                        return true;
                     }
-                }
-            })
+                },
+            });
         </script>
         <style id="message-input-style">
             #message-input {background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%;}
+            #message-input .popup {font-size: 1em; color: white; padding-bottom: 0.3em}
             #message-input input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
             #message-input button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
         </style>
         <!-- END <message-input> -->
 
-        <!-- 메시지 입력 영역 :: <userinfo-input> -->
-        <script type="text/x-template" id="userinfo-input-template">
-            <div id="nicknamePopup">
-                <span>닉네임(최대 5글자) : </span>
-                <input id="nickname" name="nickname" maxlength="5" size="8px">
-                <button id="joinBtn">참여하기</button>
-            </div>
-        </script>
-        <script id="userinfo-input-script">
-            Vue.component('userinfo-input',{
-                template: '#userinfo-input-template'
-            })
-        </script>
-
-        <!-- 메인 컴포넌트 :: <app> -->
-        <script type="text/x-template" id="app-template">
-            <div>
-                <!-- 채팅 참여 전 보여질 영역 -->
-                <welcome-msg></welcome-msg>
+        </style>
+    </head>
+  
+    <body>
+        <div id="application">
 
                 <!-- 접속자수 영역 -->
                 <live-users
@@ -147,101 +135,81 @@
                         </chat-dialog>
                     </ul>
                 </div>
-        
-                <!-- 메시지 입력 영역 -->
-                <message-input
-                    v-model="inputMsg"
-                    v-on:submit="value => SubmitFn(value)">
-                </message-input>
-        
-                <!-- 닉네임 입력 레이어팝업 -->
-                <userinfo-input></userinfo-input>
-            </div>
-        </script>
-        <script id="app-script">
-            Vue.component('app',{
-                template: '#app-template',
-                model: {
-                    prop: 'input-msg',
-                },
-                props: ['liveuser','message-list','input-msg']
-            })
-        </script>
 
-    </head>
-  
-    <body>
-        <div id="application">
-            <app
-                v-bind:message-list="messages"
-                v-bind:liveuser="liveuser"
-                v-bind:input-msg="inputMessage"
-                v-on:SubmitFn="value => send(value)">
-            </app>
+
+                <div v-if="mode === 'user'">
+                    <!-- 닉네임 입력 영역 -->
+                    <message-input
+                        :disabled="userInput.disabled"
+                        :place-holder='userInput.placeholder'
+                        :popup-message='userInput.popupMessage'
+                        :default-text='userInput.default'
+                        @submit="setUser">
+                    </message-input>                    
+                </div>
+                <div v-else-if="mode === 'chat'">
+                    <!-- 메시지 입력 영역 -->
+                    <message-input
+                        :disabled="messageInput.disabled"
+                        :place-holder='messageInput.placeholder'
+                        :popup-message='messageInput.popupMessage'
+                        :default-text='messageInput.default'
+                        @submit="send">
+                    </message-input>
+                </div>
+                <div v-else>
+                    notting
+                </div>
+
         </div>
     </body>
 
     <!-- script -->
     <script>
-        const Chat = new Claris;
-        const Chatapp = new Vue({
+        let Chat = new Claris;
+        let ChatApp = new Vue({
             el: '#application',
             data: {
                 liveuser : 0,
-                messages : [],
-                inputMessage : "Test-walwal",
+                messageList : [],
+                currentInput : 'messageInput',
+                messageInput : {
+                    disabled : true,
+                    default : "",
+                    placeholder : "255자 이내",
+                    popupMessage : "type message"
+                },
+                userInput : {
+                    disabled : false,
+                    default : "",
+                    placeholder : "5자 이내",
+                    popupMessage : "닉네임을 입력해주세요"
+                },
+                user : "",
+                mode : "user"
+            },
+            mounted: function(){
+                Chat.on(this.receive);
             },
             methods: {
                 send: function(msg){
+                    console.log("getvalue:",msg);
                     Chat.SendChat(msg);
-                }
+                },
+                setUser: function(value){
+                    Chat.setNickname(value);
+                    console.log(this);
+                    console.log(this.$data);
+                    this.$data.mode = 'chat';
+                    this.$data.messageInput.disabled = false;
+                },
+                receive: function(response){
+                    this.messageList.push({
+                        who : response.who,
+                        text : response.value,
+                    })
+                },
             }
-        });
-
-        let ChatCall = function (response) {
-            Chatapp.messages.push({
-                who : response.who,
-                text : response.value,
-            });
-        };
-
-        document.addEventListener("DOMContentLoaded", function () {
-
-            var userNickname = "";
-
-            if (userNickname.length < 1) {
-                $('#inputArea').hide();
-                $('#nicknamePopup').hide();
-            }
-
-            $('#openLayer').click(function () {
-                $('#nicknamePopup').show();
-                $('#nickname').focus();
-            });
-
-            $('#joinBtn').click(function () {
-                Chat.setNickname($('#nickname').val());
-
-                if (Chat._userNickname.length < 1) {
-                    alert('닉네임을 입력하지 않았습니다.');
-                    return;
-                }
-
-                $('#userNickname').val(Chat._userNickname);
-                $('#nicknamePopup').hide();
-                $('#infoArea').hide();
-                $('#inputArea').show();
-                $('#m').focus();
-
-                Chat.on(ChatCall);
-            });
-
-            $('form').submit(function (e) {
-                e.preventDefault(); // prevents page reloading
-                Chat.SendChat($('#m').val())
-                $('#m').val('');
-                return false;
-            });
         });
     </script>
 
