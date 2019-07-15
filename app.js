@@ -1,9 +1,13 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
+
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 //todo : 접속자정보 저장
+
 var userlist = [];
 
+app.use('/static',express.static('static'));
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/view/index.html');
 });
