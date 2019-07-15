@@ -56,6 +56,9 @@
     <script>
 
         let Chat = new Claris;
+        let ChatCall = function(response){
+            $('#messages').append($('<li class="red">').text(response.who + ' : ' + response.value));
+        };
 
         document.addEventListener("DOMContentLoaded", function(){
             var socket = io();
@@ -85,8 +88,7 @@
               $('#inputArea').show();
               $('#m').focus();
 
-              Chat.on();
-
+              Chat.on(ChatCall);
             });
 
             $('form').submit(function(e){

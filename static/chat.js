@@ -3,15 +3,17 @@ const Claris = function(){
     this.log = [];
     this.socket = "";
     this._userNickname = "";
+    this.dialog = "";
 }
 
 // 채팅 시작
-Claris.prototype.on = function(){
+Claris.prototype.on = function(callbackFn){
+    this.receiveCallback = callbackFn;
     let myClaris = this;
     myClaris.socket = io();
 
     this.socket.on('chat message',function(msg){
-        myClaris.ReciveChat(msg);
+        myClaris.ReceiveChat(msg);
     });
 }
 
@@ -32,9 +34,13 @@ Claris.prototype.SendChat = function(message){
 }
 
 // 메시지 송신시 실행 메소드
-Claris.prototype.ReciveChat = function(msg){
+Claris.prototype.ReceiveChat = function(msg){
     let nickname = this._userNickname;
-    $('#messages').append($('<li class="red">').text(nickname + ' : ' + msg)); //DOM과 연결된 메시지 목록 배열에 메시지를 추가하는 것으로 수정 예정
+
+    message = [];
+    message.who = nickname;
+    message.value = msg;
+    this.receiveCallback(message);
 }
 
 // 모듈 정상 임포트 완료
