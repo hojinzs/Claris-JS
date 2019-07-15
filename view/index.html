@@ -48,7 +48,7 @@
         <style id="live-users-style">
             #live-users {top:0};
         </style>
-        <!-- END <live-users> -->
+        <!-- END 현재 접속 인원 카운트 컴포넌트 :: <live-users> END -->
 
         <!-- 대화 내용컴포넌트 :: <chat-dialog> -->
         <script type="text/x-template" id="chat-dialog-template">
@@ -60,6 +60,10 @@
                 props: ['who','text']
             })
         </script>
+        <style id="chat-dialog-style">
+
+        </style>
+        <!-- END 대화 내용컴포넌트 :: <chat-dialog> -->
 
         <!-- 메시지 입력 영역 :: <message-input> -->
         <script type="text/x-template" id="message-input-template">
@@ -109,9 +113,8 @@
             #message-input input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
             #message-input button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
         </style>
-        <!-- END <message-input> -->
-
-        </style>
+        <!-- END 메시지 입력 영역 :: <message-input> END -->
+            
     </head>
   
     <body>
