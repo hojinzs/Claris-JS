@@ -3,12 +3,13 @@
     <head>
         <title>Socket.IO chat</title>
         <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font: 1.1em Helvetica, Arial;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body{
+                font: 1.1em Helvetica, Arial;
+                margin: 0;
+                padding: 0;
+                height: 100vh;
+                overflow: hidden;
             };
         </style>
 
@@ -16,6 +17,7 @@
         
         <!-- Library Load-->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" id="vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue-scrollto" id="vue-scrollto"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" id="socket.io"></script>
         <script src="./static/chat.js" id="claris.chat.js"></script>
 
@@ -47,12 +49,12 @@
 
         <!-- 대화 내용컴포넌트 :: <chat-dialog> -->
         <script type="text/x-template" id="chat-dialog-template">
-            <li class="red">{{ who }} : {{ text }}</li>
+            <li :id="elementId" class="red">{{ who }} : {{ text }}</li>
         </script>
         <script id="chat-dialog-script">
             Vue.component('chat-dialog',{
                 template: '#chat-dialog-template',
-                props: ['who','text']
+                props: ['who','text','element-id']
             })
         </script>
         <style id="chat-dialog-style">
@@ -69,6 +71,13 @@
                 </form>
             </div>
         </script>
+        <style id="message-input-style">
+            #message-input {background: #000; padding: 3px; width: 100%; overflow: hidden;}
+            #message-input .popup {color: white; line-height: 27px;}
+            #message-input form {line-height: 30px;}
+            #message-input input { border: 0; padding: 10px; width: 82%; margin-right: .5%; }
+            #message-input button { width: 17%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        </style>
         <script id="message-input-script">
             Vue.component('message-input',{
                 template: '#message-input-template',
@@ -108,12 +117,6 @@
                 },
             });
         </script>
-        <style id="message-input-style">
-            #message-input {background: #000; padding: 3px; width: 100%;}
-            #message-input .popup {font-size: 1em; color: white; padding-bottom: 0.3em}
-            #message-input input { border: 0; padding: 10px; width: 82%; margin-right: .5%; }
-            #message-input button { width: 17%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-        </style>
         <!-- END 메시지 입력 영역 :: <message-input> END -->
             
     </head>
@@ -135,6 +138,7 @@
                         <chat-dialog
                             v-for="message in messageList"
                             :key="message.id"
+                            :element-id='"msg_" + message.id'
                             :who="message.who"
                             :text="message.text">
                         </chat-dialog>
@@ -178,18 +182,20 @@
                 overflow: hidden;
             }
             #topmenu {
-                background-color: red;
+                height: 30px;
                 width: 100%;
             }
             #app-message-lists {
+                padding-top: 15px;
+                padding-bottom: 15px;
                 width: 100%;
-                height: calc(100% - 40px);
+                height: calc(100% - 100px);
                 overflow-y: scroll;
             }
             #app-message-input {
                 position: absolute;
+                height: 70px;
                 width: 100%;
-                background-color: green;
                 bottom: 0px;
             }
 
@@ -202,6 +208,9 @@
 
     <!-- script -->
     <script>
+        // 뷰 스크롤 모듈 호출
+        Vue.use(VueScrollTo);
+
         // 채팅 모듈 호출
         let Chat = new Claris;
 
@@ -233,7 +242,6 @@
             },
             methods: {
                 send: function(msg){
-                    console.log("getvalue:",msg);
                     Chat.SendChat(msg);
                 },
                 setUser: function(value){
@@ -253,7 +261,9 @@
                     })
                 },
                 receive: function(response){
+                    let length = this.messageList.length;
                     this.messageList.push({
+                        id : length,
                         who : response.who,
                         text : response.value,
                     })
