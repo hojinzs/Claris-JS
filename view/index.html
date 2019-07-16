@@ -13,7 +13,7 @@
             };
         </style>
 
-        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <meta name="viewport" content="initial-scale=1.0,user-scalable=no,maximum-scale=1,width=device-width" />
         
         <!-- Library Load-->
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js" id="vue.js"></script>
@@ -54,7 +54,17 @@
         <script id="chat-dialog-script">
             Vue.component('chat-dialog',{
                 template: '#chat-dialog-template',
-                props: ['who','text','element-id']
+                props: ['who','text','element-id'],
+                mounted: function(){
+                    // 대화 내용이 추가되면 대화 내용으로 포커스 (허무하다...)
+                    this.focus();
+                },
+                methods : {
+                    // 대화 내용 포커스시 이벤트 (향후 스무스 스크롤, 반짝이기 등 애니메이션 추가)
+                    focus(){
+                        this.$el.scrollIntoView();
+                    }
+                }
             })
         </script>
         <style id="chat-dialog-style">
@@ -177,23 +187,28 @@
         <style id="application-style">
             #application{
                 position: relative;
+                bottom: 0px;
                 height: 100%;
                 width: 100%;
                 overflow: hidden;
             }
             #topmenu {
+                position: fixed;
+                top: 0px;
                 height: 30px;
                 width: 100%;
             }
             #app-message-lists {
-                padding-top: 15px;
-                padding-bottom: 15px;
+                margin-top: 30px;
+                padding-top: 10px;
+                margin-bottom: 70px;
+                padding-bottom: 10px;
                 width: 100%;
-                height: calc(100% - 100px);
+                height: calc(100% - 100px) ;
                 overflow-y: scroll;
             }
             #app-message-input {
-                position: absolute;
+                position: fixed;
                 height: 70px;
                 width: 100%;
                 bottom: 0px;
