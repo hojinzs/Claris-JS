@@ -16,6 +16,9 @@ const Claris = (function(){
         this.socket.on('chat message',function(msg){
             myClaris.ReceiveChat(msg);
         });
+        this.socket.on('userSocketId',function(msg){
+            myClaris.ReceiveChat('접속 ::'+msg);
+        });
     }
 
     // 닉네임 설정 메소드
