@@ -7,9 +7,13 @@ var io = require('socket.io')(http);
 
 var userlist = [];
 
-app.use('/static',express.static('static'));
+app.use('/dist',express.static('dist'));
+app.use('/public',express.static('public'));
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/view/index.html');
+});
+app.get('/test', function(req, res){
+  res.sendFile(__dirname + '/view/test.html');
 });
 
 io.on('connection', function(socket){

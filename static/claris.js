@@ -1,17 +1,23 @@
+import io from 'socket.io-client';
+
 // Claris Chat 메인 객체
-const Claris = (function(){
-    function Claris(){
+export default class Claris {
+
+    constructor(){
         this.log = [];
         this.socket = "";
         this._userNickname = "";
         this.dialog = "";
+        this.socket = io('http://localhost:3000');
+
+        // 모듈 정상 임포트 완료
+        console.log("Chat Module 'Claris' was Imported!");
     }
 
     // 채팅 시작
-    Claris.prototype.on = function(callbackFn){
+    on(callbackFn){
         this.receiveCallback = callbackFn;
         let myClaris = this;
-        myClaris.socket = io();
 
         this.socket.on('chat message',function(msg){
             myClaris.ReceiveChat(msg);
@@ -19,34 +25,28 @@ const Claris = (function(){
     }
 
     // 닉네임 설정 메소드
-    Claris.prototype.setNickname = function(value){
+    setNickname(value){
         this._userNickname = value;
     }
 
     // 채팅로그 확인 메소드
-    Claris.prototype.chatlog = function(){
+    chatlog(){
         return this.log;
     }
 
     // 메시지 발송 메소드
-    Claris.prototype.SendChat = function(message){
+    SendChat(message){
         this.socket.emit('chat message', message);
         this.log.push(message);
     }
 
     // 메시지 송신시 실행 메소드
-    Claris.prototype.ReceiveChat = function(msg){
+    ReceiveChat(msg){
         let nickname = this._userNickname;
-
-        message = {
+        let message = {
             who : nickname,
             value : msg,
         }
         this.receiveCallback(message);
     }
-
-    // 모듈 정상 임포트 완료
-    console.log("Chat Module 'Claris' was Imported!");
-
-    return Claris;
-})();
+};
