@@ -2,6 +2,11 @@
 
 > A Vue.js project
 
+
+## 테스트
+
+/test 로 접속하여 테스트 페이지 (view/test.html, public/chat.js 사용)
+
 ## Build Setup
 
 ``` bash

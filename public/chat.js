@@ -13,7 +13,7 @@ const Claris = (function(){
         let myClaris = this;
         myClaris.socket = io();
 
-        this.socket.on('chat message',function(msg){
+        this.socket.on('chatMessage',function(msg){
             myClaris.ReceiveChat(msg);
         });
         this.socket.on('userSocketId',function(msg){
@@ -33,7 +33,7 @@ const Claris = (function(){
 
     // 메시지 발송 메소드
     Claris.prototype.SendChat = function(message){
-        this.socket.emit('chat message', message);
+        this.socket.emit('chatMessage', message);
         this.log.push(message);
     }
 
