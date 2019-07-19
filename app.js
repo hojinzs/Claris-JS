@@ -12,6 +12,9 @@ app.use('/public',express.static('public'));
 app.get('/', function(req, res){
     res.sendFile(__dirname + '/view/index.html');
 });
+app.get('/test', function(req, res){
+  res.sendFile(__dirname + '/view/test.html');
+});
 
 io.on('connection', function(socket){
   console.log('a user connected');

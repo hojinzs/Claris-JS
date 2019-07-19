@@ -1,4 +1,4 @@
-// Claris Chat 메인 객체
+// Claris Chat 메인 객체 (ES6 변환 전 원본 파일)
 const Claris = (function(){
     function Claris(){
         this.log = [];
