@@ -31,9 +31,9 @@ io.on('connection', function(socket){
 
   console.log('current user count : ' + userListArray.length);
 
-  socket.on('chat message', function(msg){
+  socket.on('chatMessage', function(msg){
     console.log('message: ' + msg);
-    io.emit('chat message', msg);
+    io.emit('chatMessage', msg);
   });
   socket.on('disconnect', function(){
     console.log('user disconnected');

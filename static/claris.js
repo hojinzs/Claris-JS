@@ -19,7 +19,7 @@ export default class Claris {
         this.receiveCallback = callbackFn;
         let myClaris = this;
 
-        this.socket.on('chat message',function(msg){
+        this.socket.on('chatMessage',function(msg){
             myClaris.ReceiveChat(msg);
         });
     }
@@ -36,7 +36,7 @@ export default class Claris {
 
     // 메시지 발송 메소드
     SendChat(message){
-        this.socket.emit('chat message', message);
+        this.socket.emit('chatMessage', message);
         this.log.push(message);
     }
 
