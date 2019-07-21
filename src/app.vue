@@ -9,13 +9,11 @@
 
         <!-- 메시지 영역 -->
         <div id="app-message-lists">
-            <div id="messages">
-                <ChatDialog
-                    v-for="message in messageList"
-                    :key="message.id"
-                    :message='message'>
-                </ChatDialog>
-            </div>
+            <ChatDialog
+                v-for="message in messageList"
+                :key="message.id"
+                :message='message'>
+            </ChatDialog>
         </div>
 
         <div id="app-message-input" v-if="mode === 'user'">
@@ -100,7 +98,7 @@ export default {
         receive: function(response){
             console.log('SERVER RESPONSE >>',response);
             console.log('USERID::',this.Chat.user.id,'RESID::',response.user.id);
-            if(this.Chat.user.id == response.user.id){
+            if(this.Chat.user.id != undefined && this.Chat.user.id == response.user.id){
                 response.user.currentUser = true;
             } else {
                 response.user.currentUser = false;

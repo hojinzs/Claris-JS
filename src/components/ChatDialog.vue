@@ -1,10 +1,11 @@
 <template>
-    <div class='dialog-wrapper'
-        v-bind:class="{my_dialog: message.user.currentUser}">
+<div class='dialog-wrapper'>
+    <div class='dialog'
+    v-bind:class="{my_dialog: message.user.currentUser}">
         <div class='who'>{{ message.user.name }}</div>
         <div 
-            v-for="msg in message.outputs"
-            :key="msg.id">
+        v-for="msg in message.outputs"
+        :key="msg.id">
             <!-- message가 'simpleText'일 경우 보이는 내용 (향후 컴포넌트화)-->
             <div class='dialog-text simpleText'>
                 {{ msg.simpleText.text }}
@@ -12,6 +13,7 @@
             <!-- message가 'simpleText'일 경우 보이는 내용 END-->
         </div>
     </div>
+</div>
 </template>
 <script>
 export default {
@@ -30,9 +32,10 @@ export default {
 }
 </script>
 <style>
-    .dialog-wrapper {margin:10px; min-width: 260px; max-width: 520px; width: 75%; float: left;}
-    .dialog-wrapper .dialog-text {background-color: #d1e0e0; padding: 15px; border-radius: 5px; margin-bottom: 5px;}
-    .dialog-wrapper.my_dialog {float: right;}
-    .dialog-wrapper.my_dialog .who {text-align: right;}
+    .dialog-wrapper {width: 100%; display: block; overflow: hidden;}
+    .dialog {margin:10px; min-width: 260px; max-width: 520px; width: 75%; float: left;}
+    .dialog .dialog-text {background-color: #d1e0e0; padding: 15px; border-radius: 5px; margin-bottom: 5px;}
+    .dialog.my_dialog {float: right;}
+    .dialog.my_dialog .who {text-align: right;}
     .my_dialog .dialog-text {background-color: #39e600;}
 </style>

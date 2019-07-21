@@ -5,13 +5,12 @@ export default class Claris {
 
     constructor(){
         this.log = [];
+        this.socket = io('http://localhost:3000');
         this.socket_id = '',
         this.user = {
-            id: '',
-            name: '',
+            id: undefined,
+            name: undefined,
         };
-        this.dialog = "";
-        this.socket = io('http://localhost:3000');
 
         // 모듈 정상 임포트 완료
         console.log("Chat Module 'Claris' was Imported!");
@@ -22,11 +21,17 @@ export default class Claris {
         this.receiveCallback = callbackFn;
         let myClaris = this;
 
-        // (이벤트 이름 : chatMessage) 접속시 유저 소켓아이디를 저장한다.
-        this.socket.on('userSocketId',function(rec){
-            myClaris.socket_id = rec;
-            console.log('userSocketId is ::', myClaris.socket_id);
-        });
+        // 첫번째 연결
+        this.socket.on('connect',function(){
+            console.log("SOCKET ID:::",myClaris.socket.id);
+            myClaris.socket_id = myClaris.socket.id
+        })
+
+        // // (이벤트 이름 : chatMessage) 접속시 유저 소켓아이디를 저장한다.
+        // this.socket.on('userSocketId',function(rec){
+        //     myClaris.socket_id = rec;
+        //     console.log('set ID is ::', myClaris.socket_id);
+        // });
 
         // (이벤트 이름 : chatMessage) 서버에서 채팅 메시지를 받을때마다 실행할 이벤트
         // 외부에서 CallbackFn을 받아 'chatMessage'를 받을때마다 콜백을 보낸다.
