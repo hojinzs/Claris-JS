@@ -1,6 +1,7 @@
 <template>
-    <div class='dialog-wrapper'>
-        <label>{{ message.user.name }}</label>
+    <div class='dialog-wrapper'
+        v-bind:class="{my_dialog: message.user.currentUser}">
+        <div class='who'>{{ message.user.name }}</div>
         <div 
             v-for="msg in message.outputs"
             :key="msg.id">
@@ -14,8 +15,9 @@
 </template>
 <script>
 export default {
-    props: ['message'],
+    props: ['message','myMessage'],
     mounted: function(){
+        console.log(this.message);
         // 대화 내용이 추가되면 대화 내용으로 포커스 (허무하다...)
         this.focus();
     },
@@ -28,6 +30,9 @@ export default {
 }
 </script>
 <style>
-    .dialog-wrapper {margin:10px; margin-left: 5%; min-width: 260px; max-width: 80%;}
-    .dialog-wrapper .dialog-text {background-color: burlywood; padding: 15px; border-radius: 5px; margin-bottom: 5px;}
+    .dialog-wrapper {margin:10px; min-width: 260px; max-width: 520px; width: 75%}
+    .dialog-wrapper .dialog-text {background-color: #d1e0e0; padding: 15px; border-radius: 5px; margin-bottom: 5px;}
+    .dialog-wrapper.my_dialog {float: right;}
+    .dialog-wrapper.my_dialog .who {text-align: right;}
+    .my_dialog .dialog-text {background-color: #39e600;}
 </style>

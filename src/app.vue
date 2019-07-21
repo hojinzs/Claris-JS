@@ -13,10 +13,7 @@
                 <ChatDialog
                     v-for="message in messageList"
                     :key="message.id"
-                    :message='message'
-                    :element-id='"msg_" + message.id'
-                    :who="message.who"
-                    :text="message.text">
+                    :message='message'>
                 </ChatDialog>
             </div>
         </div>
@@ -96,17 +93,18 @@ export default {
             this.Chat.SendChat(msg);
         },
         setUser: function(value){
-
             this.Chat.setNickname(value);
-            this.$data.user = value;
             this.$data.mode = 'chat';
             this.$data.messageInput.disabled = false;
-
-
         },
         receive: function(response){
             console.log('SERVER RESPONSE >>',response);
-            let length = this.messageList.length;
+            console.log('USERID::',this.Chat.user.id,'RESID::',response.user.id);
+            if(this.Chat.user.id == response.user.id){
+                response.user.currentUser = true;
+            } else {
+                response.user.currentUser = false;
+            }
             this.messageList.push(response)
         },
     }

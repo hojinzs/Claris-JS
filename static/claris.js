@@ -5,9 +5,10 @@ export default class Claris {
 
     constructor(){
         this.log = [];
+        this.socket_id = '',
         this.user = {
-            socket_id: '',
-            nickname: '',
+            id: '',
+            name: '',
         };
         this.dialog = "";
         this.socket = io('http://localhost:3000');
@@ -23,7 +24,8 @@ export default class Claris {
 
         // (이벤트 이름 : chatMessage) 접속시 유저 소켓아이디를 저장한다.
         this.socket.on('userSocketId',function(rec){
-            console.log('userSocketId is ::', rec);
+            myClaris.socket_id = rec;
+            console.log('userSocketId is ::', myClaris.socket_id);
         });
 
         // (이벤트 이름 : chatMessage) 서버에서 채팅 메시지를 받을때마다 실행할 이벤트
@@ -36,7 +38,12 @@ export default class Claris {
     // 닉네임 설정 메소드
     setNickname(value){
         this.socket.emit('setUserInfo', value); // 서버에 사용할 닉네임을 통보함
-        this.user.nickname = value;
+
+        let socket_id = this.socket_id;
+        this.user = {
+            id: socket_id,
+            name: value,
+        };
     }
 
     // 채팅로그 확인 메소드
