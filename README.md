@@ -2,11 +2,6 @@
 
 > A Vue.js project
 
-
-## 테스트
-
-/test 로 접속하여 테스트 페이지 (view/test.html, public/chat.js 사용)
-
 ## Build Setup
 
 ``` bash
@@ -18,6 +13,9 @@ npm run dev
 
 # build for production with minification
 npm run build
+
+# bootup node js server
+npm run start
 ```
 
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).

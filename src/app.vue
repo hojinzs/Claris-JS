@@ -13,6 +13,7 @@
                 <ChatDialog
                     v-for="message in messageList"
                     :key="message.id"
+                    :message='message'
                     :element-id='"msg_" + message.id'
                     :who="message.who"
                     :text="message.text">
@@ -46,7 +47,9 @@
     </div>
 </template>
 <script>
+
 import ChatController from '../static/claris.js'
+import MessageHelper from '../static/messageHelper.js'
 import TopBar from './components/TopBar.vue'
 import ChatDialog from './components/ChatDialog.vue'
 import MessageInput from './components/MessageInput.vue'
@@ -82,40 +85,29 @@ export default {
     },
     mounted: function(){
         this.Chat = new ChatController();
+        this.Chat.on(this.receive); //
         console.log("Vue Modile 'ChatApp' was Mounted!");
 
-        this.messageList.push({
-            who : "(system)",
-            text : "당신의 닉네임을 입력해주세요.",
-        })
+        let getMessage = new MessageHelper;
+        this.messageList.push(getMessage.setSystemMessage("당신의 닉네임을 입력해주세요."));
     },
     methods: {
         send: function(msg){
             this.Chat.SendChat(msg);
         },
         setUser: function(value){
-            // try {
-                this.Chat.on(this.receive);
-            // } catch (error) {
-            //     alert(error)
-            // };
 
             this.Chat.setNickname(value);
             this.$data.user = value;
             this.$data.mode = 'chat';
             this.$data.messageInput.disabled = false;
-            this.messageList.push({
-                who : "(system)",
-                text : "당신의 닉네임은 '"+this.$data.user+"' 입니다.",
-            })
+
+
         },
         receive: function(response){
+            console.log('SERVER RESPONSE >>',response);
             let length = this.messageList.length;
-            this.messageList.push({
-                id : length,
-                who : response.who,
-                text : response.value,
-            })
+            this.messageList.push(response)
         },
     }
 };
