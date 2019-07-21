@@ -30,7 +30,7 @@ export default {
 }
 </script>
 <style>
-    .dialog-wrapper {margin:10px; min-width: 260px; max-width: 520px; width: 75%}
+    .dialog-wrapper {margin:10px; min-width: 260px; max-width: 520px; width: 75%; float: left;}
     .dialog-wrapper .dialog-text {background-color: #d1e0e0; padding: 15px; border-radius: 5px; margin-bottom: 5px;}
     .dialog-wrapper.my_dialog {float: right;}
     .dialog-wrapper.my_dialog .who {text-align: right;}
