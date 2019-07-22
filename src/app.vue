@@ -113,44 +113,58 @@ export default {
 };
 </script>
 <style>
+    * { 
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    html body{
+        font: 1em Helvetica, Arial;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        /* overflow: hidden; */
+    }
     #application{
-        display: relative;
-        bottom: 0px;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-    }
-    #topmenu {
-        display: block;
-        overflow: hidden;
+        /* position: relative; */
         top: 0px;
-        height: 40px;
-        width: 100%;
-    }
-    #app-message-lists-wrapper{
-        display: block;
-        overflow: hidden;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        width: 100%;
-        height: calc(100vh - 90px);
-        overflow-y: scroll;
-    }
-    #app-message-input-wrapper {
-        display: fixed;
-        overflow: hidden;
-        background: #000; 
-        height: 50px;
-        width: 100%;
         bottom: 0px;
-        z-index: 10;
-    }
-    #app-message-lists {
-        width: 100%;
-    }
-    #app-message-input {
-        position: relative;
-        width: 100%;
         height: 100%;
+        width: 100%;
+        position: fixed;
+        /* overflow: hidden; */
     }
+        #topmenu {
+            display: block;
+            overflow: hidden;
+            top: 0px;
+            height: 40px;
+            width: 100%;
+        }
+        #app-message-lists-wrapper{
+            padding-top: 5px;
+            padding-bottom: 5px;
+            width: 100%;
+            height: calc(100% - 100px);
+        }
+            #app-message-lists {
+                width: 100%;
+                height: 100%;
+                overflow-y: scroll;
+            }
+        #app-message-input-wrapper {
+            display: block;
+            position: absolute;
+            overflow: hidden;
+            background: #000; 
+            height: 50px;
+            width: 100%;
+            bottom: 0px;
+            z-index: 10;
+        }
+            #app-message-input {
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
 </style>
