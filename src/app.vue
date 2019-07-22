@@ -8,36 +8,40 @@
         </div>
 
         <!-- 메시지 영역 -->
-        <div id="app-message-lists">
-            <ChatDialog
-                v-for="message in messageList"
-                :key="message.id"
-                :message='message'>
-            </ChatDialog>
+        <div id="app-message-lists-wrapper">
+            <div id="app-message-lists">
+                <ChatDialog
+                    v-for="message in messageList"
+                    :key="message.id"
+                    :message='message'>
+                </ChatDialog>
+            </div>
         </div>
 
-        <div id="app-message-input" v-if="mode === 'user'">
-            <!-- 닉네임 입력 영역 -->
-            <MessageInput
-                :disabled="userInput.disabled"
-                :place-holder='userInput.placeholder'
-                :popup-message='userInput.popupMessage'
-                :default-text='userInput.default'
-                :button-message="userInput.button"
-                :input-focus="true"
-                @submit="setUser">
-            </MessageInput>                    
-        </div>
-        <div id="app-message-input" v-else-if="mode === 'chat'">
-            <!-- 메시지 입력 영역 -->
-            <MessageInput
-                :disabled="messageInput.disabled"
-                :place-holder='messageInput.placeholder'
-                :popup-message='messageInput.popupMessage'
-                :default-text='messageInput.default'
-                :button-message="messageInput.button"
-                @submit="send">
-            </MessageInput>
+        <div id="app-message-input-wrapper">
+            <div id="app-message-input" v-if="mode === 'user'">
+                <!-- 닉네임 입력 영역 -->
+                <MessageInput
+                    :disabled="userInput.disabled"
+                    :place-holder='userInput.placeholder'
+                    :popup-message='userInput.popupMessage'
+                    :default-text='userInput.default'
+                    :button-message="userInput.button"
+                    :input-focus="true"
+                    @submit="setUser">
+                </MessageInput>                    
+            </div>
+            <div id="app-message-input" v-else-if="mode === 'chat'">
+                <!-- 메시지 입력 영역 -->
+                <MessageInput
+                    :disabled="messageInput.disabled"
+                    :place-holder='messageInput.placeholder'
+                    :popup-message='messageInput.popupMessage'
+                    :default-text='messageInput.default'
+                    :button-message="messageInput.button"
+                    @submit="send">
+                </MessageInput>
+            </div>
         </div>
     </div>
 </template>
@@ -110,33 +114,43 @@ export default {
 </script>
 <style>
     #application{
-        position: relative;
+        display: relative;
         bottom: 0px;
         height: 100%;
         width: 100%;
         overflow: hidden;
     }
     #topmenu {
-        position: fixed;
+        display: block;
+        overflow: hidden;
         top: 0px;
         height: 40px;
         width: 100%;
     }
-    #app-message-lists {
-        margin-top: 30px;
-        padding-top: 10px;
-        margin-bottom: 70px;
-        padding-bottom: 10px;
+    #app-message-lists-wrapper{
+        display: block;
+        overflow: hidden;
+        padding-top: 5px;
+        padding-bottom: 5px;
         width: 100%;
-        height: calc(100% - 110px) ;
+        height: calc(100vh - 90px);
         overflow-y: scroll;
     }
-    #app-message-input {
+    #app-message-input-wrapper {
+        display: fixed;
+        overflow: hidden;
         background: #000; 
-        position: fixed;
         height: 50px;
         width: 100%;
         bottom: 0px;
-        z-index: 5;
+        z-index: 10;
+    }
+    #app-message-lists {
+        width: 100%;
+    }
+    #app-message-input {
+        position: relative;
+        width: 100%;
+        height: 100%;
     }
 </style>
