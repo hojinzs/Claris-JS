@@ -58,7 +58,7 @@
                 <div
                     v-for="user in userList"
                     :key="user.id">
-                    {{user.name}}
+                    {{user.name}} :: {{ user.logindate }}
                 </div>
             </template>
         </RightSilder>
@@ -104,6 +104,7 @@ export default {
             mode : "user",
             Chat : {},
             showRightSilder : false,
+            currentTime : {},
         }
     },
     mounted: function(){
