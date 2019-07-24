@@ -83,6 +83,7 @@ io.on('connection', function (socket) {
 
         // 유저 배열에서 유저 삭제
         UserList.Del(userSocketId);
+        io.emit('userList', UserList.List);
 
         // 로깅
         console.log('a user (',userSocketId,') disconnected (live user :'+UserList.Connections+')'); //서버 로그에 disconnect 메시지 표시
