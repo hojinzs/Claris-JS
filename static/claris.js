@@ -4,46 +4,57 @@ import io from 'socket.io-client';
 export default class Claris {
 
     constructor(){
-        this.log = [];
         this.socket = io('http://localhost:3000');
-        this.socket_id = '',
-        this.user = {
+        this.callbackFn = {}; //콜백 함수 정의
+        this.log = []; // 채팅 로그
+        this.user = { // 사용자 정보
             id: undefined,
             name: undefined,
         };
-        this.userList = [];
+        this.userList = []; // 회원 목록
 
         // 모듈 정상 임포트 완료
         console.log("Chat Module 'Claris' was Imported!");
     }
 
-    // 채팅 시작. 서버에서 받을 메시지 이벤트를 이곳에 정의
-    on(callbackFn, userListFn){
-        this.receiveCallbackFn = callbackFn;
-        this.receiveUserListFn = userListFn;
+    /**
+     * 채팅 시작. 서버에서 이벤트 메시지 수신시 받을 콜백 함수 정의
+     * @param {chatMessage : Function, userList: Function} callbackFn 
+     */
+    on(callbackFn = {
+        chatMessage : Function,
+        userList : Function,
+    }){
+        this.callbackFn.chatMessage = callbackFn.chatMessage;
+        this.callbackFn.userList = callbackFn.userList;
+        
         let myClaris = this;
 
-        // 첫번째 연결
+        /**
+         * (이벤트 이름 : connect)첫번째 연결. 소켓 아이디를 확인한다.
+         */
         this.socket.on('connect',function(){
             console.log("SOCKET ID:::",myClaris.socket.id);
-            myClaris.socket_id = myClaris.socket.id
+            myClaris.log.push("SOCKET ID :"+myClaris.socket.id)
         })
 
-        // // (이벤트 이름 : chatMessage) 접속시 유저 소켓아이디를 저장한다.
-        // this.socket.on('userSocketId',function(rec){
-        //     myClaris.socket_id = rec;
-        //     console.log('set ID is ::', myClaris.socket_id);
-        // });
-
-        // (이벤트 이름 : chatMessage) 서버에서 채팅 메시지를 받을때마다 실행할 이벤트
-        // 외부에서 CallbackFn을 받아 'chatMessage'를 받을때마다 콜백을 보낸다.
+        /**
+         * (이벤트 이름 : chatMessage) 서버에서 채팅 메시지를 받을때마다 실행할 이벤트
+         * type : json
+         */
         this.socket.on('chatMessage',function(msg){
-            myClaris.ReceiveChat(msg);
+            myClaris.callbackFn.chatMessage(msg);
+            myClaris.log.push(msg);
         });
 
+        /**
+         * (이벤트 이름 : userList) 유저 접속, 연결해제시 서버에서 보내오는 유저 리스트
+         * type : json
+         */
         this.socket.on('userList',function(msg){
-            console.log('UserList Get!!',msg);
-            myClaris.ReceiveUser(msg);
+            myClaris.userList = msg;
+            myClaris.callbackFn.userList(msg);
+            myClaris.log.push(msg);
         });
     }
 
@@ -51,16 +62,11 @@ export default class Claris {
     setNickname(value){
         this.socket.emit('setUserInfo', value); // 서버에 사용할 닉네임을 통보함
 
-        let socket_id = this.socket_id;
+        let socket_id = this.socket.id;
         this.user = {
             id: socket_id,
             name: value,
         };
-    }
-
-    // 채팅로그 확인 메소드
-    chatlog(){
-        return this.log;
     }
 
     // 메시지 발송 메소드
@@ -69,13 +75,8 @@ export default class Claris {
         this.log.push(message);
     }
 
-    // 메시지 송신시 실행 메소드
-    ReceiveChat(message){
-        this.receiveCallbackFn(message);
-    }
-
-    // 유저리스트 송신시 실행 메소드
-    ReceiveUser(users){
-        this.receiveUserListFn(users);
+    // 로그 확인 메소드
+    getLog(){
+        return this.log;
     }
 };

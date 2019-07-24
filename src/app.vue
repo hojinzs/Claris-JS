@@ -1,11 +1,11 @@
 <template>
     <div id="application">
         <!-- 접속자수 영역 -->
-        <div id="topmenu">
+        <div id="app-topmenu">
             <TopBar>
                 <div id="counter"
                     v-on:click="toggleRightSilder(true)">
-                    Live :: <span>{{ userConnections() }}</span>명
+                    Live :: <span>{{ userConnections }}</span>명
                 </div>
             </TopBar>
         </div>
@@ -86,6 +86,7 @@ export default {
     data: function(){
         return{
             messageList : [],
+            userList : [],
             messageInput : {
                 disabled : true,
                 default : "",
@@ -100,7 +101,6 @@ export default {
                 popupMessage : "닉네임을 입력해주세요",
                 button : '설정',
             },
-            userList : [],
             mode : "user",
             Chat : {},
             showRightSilder : false,
@@ -109,37 +109,62 @@ export default {
     },
     mounted: function(){
         this.Chat = new ChatController();
-        this.Chat.on(this.receive,this.setUserList); //
+        this.Chat.on({
+            chatMessage : this.receive,
+            userList : this.setUserList
+        });
         console.log("Vue Modile 'ChatApp' was Mounted!");
 
+        // Welcome 메시지
         let getMessage = new MessageHelper;
         let SetMsg = getMessage.setSystemMessage("당신의 닉네임을 입력해주세요.");
-        this.messageList.push(getMessage.setSystemMessage("당신의 닉네임을 입력해주세요."));
+        SetMsg.id = this.messageList.length; //message 에 key(id) 넣기
+        this.messageList.push(SetMsg);
     },
     watch: {
         userList: function(){
             console.log('UserList Update!!',this.userList);
         }
     },
+    computed: {
+        userConnections : function(){
+            return this.userList.length;
+        },
+    },
     methods: {
+        /**
+         * 메시지 전송시, 채팅 모듈의 SendChat으로 데이터 보냄
+         */
         sendMessage: function(msg){
             this.Chat.SendChat(msg);
         },
+        /**
+         * 유저 정보 설정시, 채팅 모듈의 setUser로 데이터 보냄
+         */
         setUser: function(value){
             this.Chat.setNickname(value);
             this.$data.mode = 'chat';
-            this.$data.messageInput.disabled = false;
+            this.$data.messageInput.disabled = false; //메시지 input창 활성화
         },
+        /**
+         * 채팅 모듈의 메시지 수신 이벤트에 넣을 콜백
+         */
         receive: function(response){
-            console.log('SERVER RESPONSE >>',response);
-            console.log('USERID::',this.Chat.user.id,'RESID::',response.user.id);
+            console.log('SERVER RESPONSE >>',response); // (개발용) 서버 메시지 로그
+
             if(this.Chat.user.id != undefined && this.Chat.user.id == response.user.id){
                 response.user.currentUser = true;
             } else {
                 response.user.currentUser = false;
             }
-            response.id = this.messageList.length + 1;
+            response.id = this.messageList.length + 1; //message 에 key(id) 넣기
             this.messageList.push(response)
+        },
+        /**
+         * 채팅 모듈의 유저 정보 업데이트에 넣을 콜백
+         */
+        setUserList : function(msg){
+            this.userList = msg;
         },
         toggleRightSilder: function(toggleVal = null){
             if(toggleVal != null){
@@ -148,12 +173,6 @@ export default {
                 this.showRightSilder = !this.showRightSilder;
             }
         },
-        userConnections : function(){
-            return this.userList.length;
-        },
-        setUserList : function(msg){
-            this.userList = msg;
-        }
     }
 };
 </script>
@@ -179,7 +198,7 @@ export default {
         position: fixed;
         /* overflow: hidden; */
     }
-        #topmenu {
+        #app-topmenu {
             display: block;
             overflow: hidden;
             top: 0px;
@@ -187,15 +206,16 @@ export default {
             width: 100%;
         }
         #app-message-lists-wrapper{
-            padding-top: 5px;
-            padding-bottom: 5px;
+            /* padding-top: 5px; */
+            /* padding-bottom: 5px; */
             width: 100%;
-            height: calc(100% - 100px);
+            height: calc(100% - 90px);
         }
             #app-message-lists {
                 width: 100%;
                 height: 100%;
                 overflow-y: scroll;
+                -webkit-overflow-scrolling: touch;
             }
         #app-message-input-wrapper {
             display: block;
@@ -216,10 +236,10 @@ export default {
 
     /**animation**/
     .list-enter-active, .list-leave-active {
-        transition: all 1s;
+        transition: all 0.3s;
     }
     .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(15px);
     }
 </style>
