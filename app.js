@@ -81,6 +81,10 @@ io.on('connection', function (socket) {
     // 유저 디스커텍트
     socket.on('disconnect', function () {
 
+        let msg = new MsgParser;
+
+        //사용자 접속종료시 안내메시지 전송
+        io.emit('chatMessage',msg.setSystemMessage("'"+UserList.getUserById(userSocketId).name+"' 님이 퇴장하셨습니다."));
         // 유저 배열에서 유저 삭제
         UserList.Del(userSocketId);
         io.emit('userList', UserList.List);
