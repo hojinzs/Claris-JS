@@ -58,21 +58,18 @@
 
 **규격(Sample)**
 ```json
-{
-  "connections": 3,
-  "users" : [
-    {
-      "id": "_foPKdcjQVfvmuERAAAA",
-      "name": "김두한"
-    },
-    {
-      "id": "-9Am1IJi2LNiFRvpAAAB",
-      "name": "심영"
-    },
-        {
-      "id": "MNTFNyI6MEbSOHo4AAAA",
-      "name": "의사양반"
-    },    
-  ]
-}
+[
+  {
+    "id": "_foPKdcjQVfvmuERAAAA",
+    "name": "김두한"
+  },
+  {
+    "id": "-9Am1IJi2LNiFRvpAAAB",
+    "name": "심영"
+  },
+      {
+    "id": "MNTFNyI6MEbSOHo4AAAA",
+    "name": "의사양반"
+  },    
+]
 ```

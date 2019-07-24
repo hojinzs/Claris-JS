@@ -5,7 +5,7 @@
             <TopBar>
                 <div id="counter"
                     v-on:click="toggleRightSilder(true)">
-                    Live :: <span>{{ userList.connections }}</span>명
+                    Live :: <span>{{ userConnections() }}</span>명
                 </div>
             </TopBar>
         </div>
@@ -56,7 +56,7 @@
             </template>
             <template v-slot:contents>
                 <div
-                    v-for="user in userList.users"
+                    v-for="user in userList"
                     :key="user.id">
                     {{user.name}}
                 </div>
@@ -100,7 +100,7 @@ export default {
                 popupMessage : "닉네임을 입력해주세요",
                 button : '설정',
             },
-            userList : {},
+            userList : [],
             mode : "user",
             Chat : {},
             showRightSilder : false,
@@ -108,31 +108,17 @@ export default {
     },
     mounted: function(){
         this.Chat = new ChatController();
-        this.Chat.on(this.receive); //
+        this.Chat.on(this.receive,this.setUserList); //
         console.log("Vue Modile 'ChatApp' was Mounted!");
 
         let getMessage = new MessageHelper;
         let SetMsg = getMessage.setSystemMessage("당신의 닉네임을 입력해주세요.");
         this.messageList.push(getMessage.setSystemMessage("당신의 닉네임을 입력해주세요."));
-
-        //user 개발용 기본 텍스트
-        this.userList = {
-            "connections": 3,
-            "users" : [
-                {
-                "id": "_foPKdcjQVfvmuERAAAA",
-                "name": "김두한"
-                },
-                {
-                "id": "-9Am1IJi2LNiFRvpAAAB",
-                "name": "심영"
-                },
-                    {
-                "id": "MNTFNyI6MEbSOHo4AAAA",
-                "name": "의사양반"
-                },    
-            ]
-        };
+    },
+    watch: {
+        userList: function(){
+            console.log('UserList Update!!',this.userList);
+        }
     },
     methods: {
         sendMessage: function(msg){
@@ -160,6 +146,12 @@ export default {
             } else {
                 this.showRightSilder = !this.showRightSilder;
             }
+        },
+        userConnections : function(){
+            return this.userList.length;
+        },
+        setUserList : function(msg){
+            this.userList = msg;
         }
     }
 };

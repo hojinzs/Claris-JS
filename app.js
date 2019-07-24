@@ -62,7 +62,7 @@ io.on('connection', function (socket) {
         io.emit('chatMessage',msg.setSystemMessage("닉네임은 '"+data+"' 님이 접속하셨습니다."));
 
         //사용자정보를 client로 전송
-        io.emit('userList', UserList);
+        io.emit('userList', UserList.List);
 
         // 로깅 (닉네임 세팅)
         console.log('a user ('+userSocketId+') set nickname -> '+ data+' (live user :'+UserList.Connections +')');

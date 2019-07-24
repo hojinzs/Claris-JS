@@ -11,14 +11,16 @@ export default class Claris {
             id: undefined,
             name: undefined,
         };
+        this.userList = [];
 
         // 모듈 정상 임포트 완료
         console.log("Chat Module 'Claris' was Imported!");
     }
 
     // 채팅 시작. 서버에서 받을 메시지 이벤트를 이곳에 정의
-    on(callbackFn){
-        this.receiveCallback = callbackFn;
+    on(callbackFn, userListFn){
+        this.receiveCallbackFn = callbackFn;
+        this.receiveUserListFn = userListFn;
         let myClaris = this;
 
         // 첫번째 연결
@@ -37,6 +39,11 @@ export default class Claris {
         // 외부에서 CallbackFn을 받아 'chatMessage'를 받을때마다 콜백을 보낸다.
         this.socket.on('chatMessage',function(msg){
             myClaris.ReceiveChat(msg);
+        });
+
+        this.socket.on('userList',function(msg){
+            console.log('UserList Get!!',msg);
+            myClaris.ReceiveUser(msg);
         });
     }
 
@@ -64,11 +71,11 @@ export default class Claris {
 
     // 메시지 송신시 실행 메소드
     ReceiveChat(message){
-        // let nickname = this._userNickname;
-        // let message = {
-        //     who : nickname,
-        //     value : msg,
-        // }
-        this.receiveCallback(message);
+        this.receiveCallbackFn(message);
+    }
+
+    // 유저리스트 송신시 실행 메소드
+    ReceiveUser(users){
+        this.receiveUserListFn(users);
     }
 };
