@@ -23,6 +23,7 @@ class ClarisUser{
         this.userList.push({
             id : val.id,
             name : val.name,
+            logindate : val.logindate
         });
     }
 
