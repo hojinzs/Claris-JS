@@ -2,19 +2,24 @@
     <div id="application">
         <!-- 접속자수 영역 -->
         <div id="topmenu">
-            <TopBar
-                v-bind:counter='liveuser'>
+            <TopBar>
+                <div id="counter"
+                    v-on:click="toggleRightSilder(true)">
+                    Live :: <span>{{ userList.connections }}</span>명
+                </div>
             </TopBar>
         </div>
 
         <!-- 메시지 영역 -->
         <div id="app-message-lists-wrapper">
             <div id="app-message-lists">
+                <transition-group name="list" key="ChatDialog">
                 <ChatDialog
                     v-for="message in messageList"
                     :key="message.id"
                     :message='message'>
                 </ChatDialog>
+                </transition-group>
             </div>
         </div>
 
@@ -39,29 +44,47 @@
                     :popup-message='messageInput.popupMessage'
                     :default-text='messageInput.default'
                     :button-message="messageInput.button"
-                    @submit="send">
+                    @submit="sendMessage">
                 </MessageInput>
             </div>
         </div>
+        <RightSilder
+            v-show="showRightSilder"
+            @toggle="toggleRightSilder">
+            <template v-slot:header>
+                Live User :: {{ userList.connections }}
+            </template>
+            <template v-slot:contents>
+                <div
+                    v-for="user in userList.users"
+                    :key="user.id">
+                    {{user.name}}
+                </div>
+            </template>
+        </RightSilder>
     </div>
 </template>
 <script>
 
+// controller & librarys
 import ChatController from '../static/claris.js'
 import MessageHelper from '../static/messageHelper.js'
-import TopBar from './components/TopBar.vue'
-import ChatDialog from './components/ChatDialog.vue'
-import MessageInput from './components/MessageInput.vue'
+
+// Vue components
+import TopBar from './components/TopBar'
+import ChatDialog from './components/ChatDialog'
+import MessageInput from './components/MessageInput'
+import RightSilder from './components/RightSlider'
 
 export default {
     components: {
         'TopBar' : TopBar,
         'ChatDialog' : ChatDialog,
         'MessageInput' : MessageInput,
+        'RightSilder' : RightSilder,
     },
     data: function(){
         return{
-            liveuser : 0,
             messageList : [],
             messageInput : {
                 disabled : true,
@@ -77,9 +100,10 @@ export default {
                 popupMessage : "닉네임을 입력해주세요",
                 button : '설정',
             },
-            user : "",
+            userList : {},
             mode : "user",
             Chat : {},
+            showRightSilder : false,
         }
     },
     mounted: function(){
@@ -88,10 +112,30 @@ export default {
         console.log("Vue Modile 'ChatApp' was Mounted!");
 
         let getMessage = new MessageHelper;
+        let SetMsg = getMessage.setSystemMessage("당신의 닉네임을 입력해주세요.");
         this.messageList.push(getMessage.setSystemMessage("당신의 닉네임을 입력해주세요."));
+
+        //user 개발용 기본 텍스트
+        this.userList = {
+            "connections": 3,
+            "users" : [
+                {
+                "id": "_foPKdcjQVfvmuERAAAA",
+                "name": "김두한"
+                },
+                {
+                "id": "-9Am1IJi2LNiFRvpAAAB",
+                "name": "심영"
+                },
+                    {
+                "id": "MNTFNyI6MEbSOHo4AAAA",
+                "name": "의사양반"
+                },    
+            ]
+        };
     },
     methods: {
-        send: function(msg){
+        sendMessage: function(msg){
             this.Chat.SendChat(msg);
         },
         setUser: function(value){
@@ -107,8 +151,16 @@ export default {
             } else {
                 response.user.currentUser = false;
             }
+            response.id = this.messageList.length + 1;
             this.messageList.push(response)
         },
+        toggleRightSilder: function(toggleVal = null){
+            if(toggleVal != null){
+                this.showRightSilder = toggleVal;
+            } else {
+                this.showRightSilder = !this.showRightSilder;
+            }
+        }
     }
 };
 </script>
@@ -167,4 +219,14 @@ export default {
                 width: 100%;
                 height: 100%;
             }
+
+
+    /**animation**/
+    .list-enter-active, .list-leave-active {
+        transition: all 1s;
+    }
+    .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
+        opacity: 0;
+        transform: translateY(30px);
+    }
 </style>
