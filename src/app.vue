@@ -55,11 +55,11 @@
                 Live User :: {{ userList.connections }}
             </template>
             <template v-slot:contents>
-                <div
+                <UserCard
                     v-for="user in userList"
-                    :key="user.id">
-                    {{user.name}} :: {{ user.logindate }}
-                </div>
+                    :key="user.id"
+                    :user="user">
+                </UserCard>
             </template>
         </RightSilder>
     </div>
@@ -75,6 +75,8 @@ import TopBar from './components/TopBar'
 import ChatDialog from './components/ChatDialog'
 import MessageInput from './components/MessageInput'
 import RightSilder from './components/RightSlider'
+import UserCard from './components/UserCard'
+
 
 export default {
     components: {
@@ -82,6 +84,7 @@ export default {
         'ChatDialog' : ChatDialog,
         'MessageInput' : MessageInput,
         'RightSilder' : RightSilder,
+        'UserCard' : UserCard,
     },
     data: function(){
         return{
@@ -236,7 +239,7 @@ export default {
 
     /**animation**/
     .list-enter-active, .list-leave-active {
-        transition: all 0.3s;
+        transition: all 0.5s;
     }
     .list-enter, .list-leave-to /* .list-leave-active below version 2.1.8 */ {
         opacity: 0;
