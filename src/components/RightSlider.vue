@@ -1,11 +1,16 @@
 <template>
-    <div id="app-right-slider-backdrop"
-        v-on:click.self="hideThis">
-        <div id="app-right-slider">
+    <transition name="pade-opacity">
+    <div 
+        v-show="show"
+        id="app-right-slider-backdrop"
+        v-on:click.self="Hide()">
+        <transition name="right-slide">
+        <div id="app-right-slider"
+            v-show="show">
             <div id="app-right-slider-wrapper">
                 <div>
                     <slot name="header">Untitled</slot>
-                    <button v-on:click.self="hideThis">X</button>
+                    <button v-on:click.self="Hide()">X</button>
                 </div>
                 <hr>
                 <div>
@@ -13,14 +18,17 @@
                 </div>
             </div>
         </div>
+        </transition>
     </div>
+    </transition>
 </template>
 <script>
 export default {
+    props: ['show'],
     methods: {
-        hideThis : function(){
-            this.$emit('toggle',false);
-        }
+        Hide: function(){
+            this.$emit('siderToggle')
+        },
     }
 };
 </script>
@@ -50,21 +58,40 @@ export default {
             height: 100%;
         }
 
-    .bounce-enter-active {
-  animation: bounce-in .5s;
+.pade-opacity-enter-active {
+  animation: pade-in .5s;
 }
-.bounce-leave-active {
-  animation: bounce-in .5s reverse;
+.pade-opacity-leave-active {
+  animation: pade-in .5s reverse;
 }
-@keyframes bounce-in {
+@keyframes pade-in {
   0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.5);
+    opacity: 0;
   }
   100% {
-    transform: scale(1);
+    opacity: 1;
   }
 }
+
+.right-slide-enter-active{
+    animation: right-slide-in .5s;
+}
+.right-slide-leave-active {
+    animation: right-slide-in .5s reverse;
+}
+@keyframes right-slide-in {
+    0% {
+        right: -500px;
+    }
+    50% {
+        right: -350px;
+    }
+    80% {
+        right: -50px;
+    }
+    100%{
+        right: 0px;
+    }
+}
+
 </style>

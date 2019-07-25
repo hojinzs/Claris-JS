@@ -1,11 +1,16 @@
 <template>
-  <div id="top-bar">
-    <slot></slot>
+    <div id="top-bar">
+        <div class="cr-left cr-box">
+            <slot name="left"></slot>
+        </div>
+        <div class="cr-right cr-box">
+            <slot name="right"></slot>
+        </div>
   </div>
 </template>
 <script>
 export default {
-    methods: {}
+  methods: {}
 };
 </script>
 <style>
@@ -14,14 +19,27 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  vertical-align: middle;
-  display: table;
   border-bottom: black 1px solid;
 }
-#top-bar div {
-  display: table-cell;
-  vertical-align: middle;
-  padding-right: 15px;
-  padding-left: 15px;
+
+#top-bar .cr-box{
+    display: table;
+}
+
+#top-bar .cr-box div{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#top-bar .cr-left{
+    padding-left: 10px;
+    float: left;
+    height: 100%;
+}
+
+#top-bar .cr-right{
+    padding-right: 10px;
+    float: right;
+    height: 100%;
 }
 </style>

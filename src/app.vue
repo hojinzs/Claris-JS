@@ -3,10 +3,12 @@
         <!-- 접속자수 영역 -->
         <div id="app-topmenu">
             <TopBar>
-                <div id="counter"
-                    v-on:click="toggleRightSilder(true)">
-                    Live :: <span>{{ userConnections }}</span>명
-                </div>
+                <template v-slot:right>
+                    <div id="counter"
+                        v-on:click="siderToggle(true)">
+                        Live :: <span>{{ userConnections }}</span>명
+                    </div>
+                </template>
             </TopBar>
         </div>
 
@@ -49,10 +51,10 @@
             </div>
         </div>
         <RightSilder
-            v-show="showRightSilder"
-            @toggle="toggleRightSilder">
+            :show="RightsliderToggle"
+            @siderToggle="siderToggle">
             <template v-slot:header>
-                Live User :: {{ userList.connections }}
+                Live User :: {{ userConnections }} 명
             </template>
             <template v-slot:contents>
                 <UserCard
@@ -106,8 +108,8 @@ export default {
             },
             mode : "user",
             Chat : {},
-            showRightSilder : false,
             currentTime : {},
+            RightsliderToggle : false,
         }
     },
     mounted: function(){
@@ -169,12 +171,9 @@ export default {
         setUserList : function(msg){
             this.userList = msg;
         },
-        toggleRightSilder: function(toggleVal = null){
-            if(toggleVal != null){
-                this.showRightSilder = toggleVal;
-            } else {
-                this.showRightSilder = !this.showRightSilder;
-            }
+        siderToggle : function(val = false){
+            console.log('Slider toggled ::',val);
+            this.RightsliderToggle = val;
         },
     }
 };
