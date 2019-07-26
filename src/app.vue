@@ -1,5 +1,10 @@
 <template>
     <div id="application">
+        <!-- 닉네임 입력 전체화면 -->
+        <WelcomeShow 
+            @submit="setUser"
+            :show="WelcomeShow"></WelcomeShow>
+
         <!-- 접속자수 영역 -->
         <div id="app-topmenu">
             <TopBar>
@@ -73,6 +78,7 @@ import ChatController from '../static/claris.js'
 import MessageHelper from '../static/messageHelper.js'
 
 // Vue components
+import WelcomeShow from './components/WelcomeShow'
 import TopBar from './components/TopBar'
 import ChatDialog from './components/ChatDialog'
 import MessageInput from './components/MessageInput'
@@ -87,6 +93,7 @@ export default {
         'MessageInput' : MessageInput,
         'RightSilder' : RightSilder,
         'UserCard' : UserCard,
+        'WelcomeShow' : WelcomeShow,
     },
     data: function(){
         return{
@@ -106,6 +113,7 @@ export default {
                 popupMessage : "닉네임을 입력해주세요",
                 button : '설정',
             },
+            WelcomeShow : true,
             mode : "user",
             Chat : {},
             currentTime : {},
@@ -148,6 +156,7 @@ export default {
          */
         setUser: function(value){
             this.Chat.setNickname(value);
+            this.WelcomeShow = false;
             this.$data.mode = 'chat';
             this.$data.messageInput.disabled = false; //메시지 input창 활성화
         },
