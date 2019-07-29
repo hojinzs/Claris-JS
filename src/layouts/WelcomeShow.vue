@@ -25,6 +25,9 @@ export default {
             text : ''
         }
     },
+    mounted: function(){
+        console.log('WelcomeShow Mounted >> ',this.show);
+    },
     methods: {
         Hide(){
             this.$emit('siderToggle')
