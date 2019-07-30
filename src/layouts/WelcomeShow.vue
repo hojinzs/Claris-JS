@@ -9,7 +9,7 @@
                     v-model='text'
                     autocomplete="off"/>
                     <div class="button-wrapper">
-                        <button >설정</button>
+                        <button class="cl_button blue">설정</button>
                     </div>
             </form>
         </div>
@@ -45,7 +45,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
 #app-welcome{
     position: fixed;
     top: 0px;
@@ -70,6 +70,10 @@ export default {
 }
 
 #app-welcome-wrapper form input{
+    width: 100%;
+}
+
+#app-welcome-wrapper button{
     width: 100%;
 }
 

@@ -12,6 +12,7 @@
 <script>
 import WelcomeShow from './layouts/WelcomeShow'
 import ChatRooom from './layouts/ChatRoom'
+import AppStyle from './app.css'
 
 export default {
     components: {
@@ -34,19 +35,7 @@ export default {
     },
 }
 </script>
-<style>
-    * { 
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    html body{
-        font: 1em Helvetica, Arial;
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        /* overflow: hidden; */
-    }
+<style scoped>
     #application{
         /* position: relative; */
         top: 0px;
@@ -56,6 +45,8 @@ export default {
         position: fixed;
         /* overflow: hidden; */
     }
+
+    /* 블러 처리 */
     .blur {
         -webkit-filter: blur(4px);
         -moz-filter: blur(4px);
@@ -63,4 +54,5 @@ export default {
         -ms-filter: blur(4px);
         filter: blur(4px);
     }
+
 </style>
