@@ -27,7 +27,7 @@
         </div>
 
         <div id="app-message-input-wrapper">
-            <div id="app-message-input" v-if="mode === 'chat'">
+            <div id="app-message-input">
                 <!-- 메시지 입력 영역 -->
                 <MessageInput
                     :disabled="messageInput.disabled"

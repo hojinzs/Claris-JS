@@ -1,4 +1,18 @@
 /* 공통 CSS 클래스 */
+* { 
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+};
+
+body{
+    font: 1em Helvetica, Arial;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    position: fixed;
+};          
 
 /* 버튼 스타일 정의 */
 .cl_button{
@@ -7,7 +21,7 @@
     padding: 5px;
 }
 
-.cl_button.blue{
+.cl_button_blue {
     color: aliceblue;
     background-color: cornflowerblue;
     border-color: blue
@@ -15,5 +29,18 @@
 
 /* 인풋 박스 스타일 정의 */
 .cl_input{
-    
+    border: 1px grey solid;
+    padding: 10px;
+    left: 0px;
+    padding-right: 100px;
+    border-radius: 5px    
+}
+
+/* 블러 처리 */
+.blur {
+    -webkit-filter: blur(4px);
+    -moz-filter: blur(4px);
+    -o-filter: blur(4px);
+    -ms-filter: blur(4px);
+    filter: blur(4px);
 }

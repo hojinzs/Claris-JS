@@ -2,7 +2,7 @@
     <div id="message-input">
         <div class="popup-wrapper">{{ popupMessage }} </div>
         <form v-on:submit.prevent = "submit">
-            <input
+            <input class="cl-input-box"
                 v-model='text'
                 v-bind:placeholder="placeHolder" 
                 :disabled="disabled"

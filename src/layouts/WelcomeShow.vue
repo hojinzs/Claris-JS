@@ -3,15 +3,16 @@
     <div id="app-welcome"
         v-show="show">
         <div id="app-welcome-wrapper">
-            <div class="header">닉네임을 입력해주세요.</div>
-            <form v-on:submit.prevent = "submit">
-                <input
-                    v-model='text'
-                    autocomplete="off"/>
-                    <div class="button-wrapper">
-                        <button class="cl_button blue">설정</button>
-                    </div>
-            </form>
+            <div id="app-welcome-contents">
+                <div class="header">닉네임을 입력해주세요.</div>
+                <form v-on:submit.prevent = "submit">
+                    <input
+                        class="cl_input"
+                        v-model='text'
+                        autocomplete="off"/>
+                    <button class="cl_button cl_button_blue">설정</button>
+                </form>
+            </div>
         </div>
     </div>
     </transition>
@@ -61,7 +62,12 @@ export default {
 #app-welcome-wrapper{
     position: absolute;
     width: 100%;
-    top: 30%;
+    top: 25%;
+    padding: 5%;
+}
+
+#app-welcome-contents{
+    width: 100%
 }
 
 #app-welcome-wrapper .header{
