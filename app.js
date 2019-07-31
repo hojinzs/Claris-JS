@@ -16,8 +16,6 @@ app.use('/dist', express.static('dist'));
 const Common = require('./middleware/common');
 let init = new Common;
 
-let userToken = init.makeUserToken();
-
 ////////////////////////
 /// Route Setting
 ////////////////////////
@@ -46,6 +44,9 @@ let userMessage = new Array(),
 /// Socket io Setting
 ////////////////////////
 io.on('connection', function (socket) {
+    let userToken = init.makeUserToken();
+
+    console.log('userToken', userToken);
 
     // (소켓 열림) 유저 아이디를 소켓아이디로 설정
     let userSocketId = socket.id;
