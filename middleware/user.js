@@ -9,6 +9,7 @@ class ClarisUser{
 
     constructor(value){
         this.userList = [];
+        this.seq = 0;
     }
 
     get List(){
@@ -20,9 +21,12 @@ class ClarisUser{
     }
     
     Add(val ={}){
+        this.seq = this.seq + 1
+
         let newUser = {
+            id : this.seq,
             token: val.token,
-            id : val.id,
+            socketid : val.socketid,
             name : val.name,
             logindate : val.logindate
         }

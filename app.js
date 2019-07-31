@@ -61,7 +61,7 @@ io.on('connection', function (socket) {
     socket.on('setUserInfo', function (data) {
         let newUser = UserList.Add({
             "token" : userToken,
-            "id" : userSocketId,
+            "socketid" : userSocketId,
             "name" : data,
             "logindate" : new Date()
         })
@@ -69,7 +69,7 @@ io.on('connection', function (socket) {
         io.emit('chatMessage',msg.setSystemMessage("닉네임은 '"+data+"' 님이 접속하셨습니다."));
 
         // 해당 사용자에게 토큰값 전달
-        io.to(newUser.token).emit('sendUserInfo', newUser);
+        io.to(newUser.socketid).emit('sendUserInfo', newUser);
 
         //사용자정보를 client로 전송
         io.emit('userList', UserList.List);
