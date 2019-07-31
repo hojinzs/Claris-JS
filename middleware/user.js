@@ -21,6 +21,7 @@ class ClarisUser{
     
     Add(val ={}){
         this.userList.push({
+            token: val.token,
             id : val.id,
             name : val.name,
             logindate : val.logindate
