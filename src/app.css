@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-};
+}
 
 body{
     font: 1em Helvetica, Arial;
@@ -12,7 +12,7 @@ body{
     height: 100vh;
     overflow: hidden;
     position: fixed;
-};          
+}      
 
 /* 버튼 스타일 정의 */
 .cl_button{
@@ -21,10 +21,10 @@ body{
     padding: 5px;
 }
 
-.cl_button_blue {
+.cl_button_blue{
     color: aliceblue;
     background-color: cornflowerblue;
-    border-color: blue
+    border-color: blue;
 }
 
 /* 인풋 박스 스타일 정의 */

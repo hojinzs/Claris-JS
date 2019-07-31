@@ -34,9 +34,7 @@ export default {
     },
 }
 </script>
-<style>
-    @import './app.css';
-
+<style scoped>
     #application{
         /* position: relative; */
         top: 0px;
@@ -46,5 +44,4 @@ export default {
         position: fixed;
         /* overflow: hidden; */
     }
-
 </style>
