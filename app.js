@@ -46,14 +46,9 @@ let userMessage = new Array(),
 io.on('connection', function (socket) {
     let userToken = init.makeUserToken();
 
-    console.log('userToken', userToken);
-
     // (소켓 열림) 유저 아이디를 소켓아이디로 설정
     let userSocketId = socket.id;
-    console.log('a user (',userSocketId,') was connected');
-
-    // 유저 아이디 전달
-    io.emit('userSocketId', userSocketId);
+    console.log('a user (soektid : ',userSocketId, ' token : ', userToken,') was connected');
 
     // // (테스트용) 사람이 오면 일단 테스트 메시지를 일단 날려본다. (어서오시게 두한이)
     // function fourDollor(){
@@ -64,7 +59,7 @@ io.on('connection', function (socket) {
 
     // 유저 정보 설정
     socket.on('setUserInfo', function (data) {
-        UserList.Add({
+        let newUser = UserList.Add({
             "token" : userToken,
             "id" : userSocketId,
             "name" : data,
@@ -72,6 +67,9 @@ io.on('connection', function (socket) {
         })
         let msg = new MsgParser;
         io.emit('chatMessage',msg.setSystemMessage("닉네임은 '"+data+"' 님이 접속하셨습니다."));
+
+        // 해당 사용자에게 토큰값 전달
+        io.to(newUser.token).emit('sendUserInfo', newUser);
 
         //사용자정보를 client로 전송
         io.emit('userList', UserList.List);

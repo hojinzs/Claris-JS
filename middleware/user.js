@@ -20,12 +20,16 @@ class ClarisUser{
     }
     
     Add(val ={}){
-        this.userList.push({
+        let newUser = {
             token: val.token,
             id : val.id,
             name : val.name,
             logindate : val.logindate
-        });
+        }
+
+        this.userList.push(newUser);
+
+        return newUser;
     }
 
     Del(userSocketId){
