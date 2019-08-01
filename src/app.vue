@@ -6,7 +6,10 @@
             :show="WelcomeToggle"></WelcomeShow>
 
         <!-- 채팅방 -->
-        <ChatRoom :class="{ blur: ChatRooomBlur }" ref="room"></ChatRoom>
+        <ChatRoom ref="room"
+            @LoginSuccess="UserLogin"
+            :class="{ blur: ChatRooomBlur }">
+        </ChatRoom>
     </div>
 </template>
 <script>
@@ -27,10 +30,14 @@ export default {
     methods: {
         setUser(data){
             console.log("SET USER >> ",data);
-            this.WelcomeToggle = false;
             this.$refs.room.setUser(data);
+        },
+        UserLogin(data){
+            console.log("USER LOGIN >> ",data);
+
+            this.WelcomeToggle = false;
             this.ChatRooomBlur = false;
-        }
+        },
     },
 }
 </script>

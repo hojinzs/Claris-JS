@@ -95,7 +95,6 @@ export default {
                 popupMessage : "닉네임을 입력해주세요",
                 button : '설정',
             },
-            WelcomeShow : true,
             mode : "user",
             Chat : {},
             currentTime : {},
@@ -105,8 +104,9 @@ export default {
     mounted: function(){
         this.Chat = new ChatController();
         this.Chat.on({
-            chatMessage : this.receive,
-            userList : this.setUserList
+            _setUser : this.LoginSuccess,
+            _chatMessage : this.receive,
+            _userList : this.setUserList,
         });
         console.log("Vue Modile 'ChatApp' was Mounted!");
 
@@ -122,8 +122,11 @@ export default {
         }
     },
     computed: {
+        /**
+         * 현재 접속중인 유저 수 (STATUS == 'LIVE')
+         */
         userConnections : function(){
-            return this.userList.length;
+            return this.userList.filter(u => u.status == 'LIVE').length;
         },
     },
     methods: {
@@ -138,7 +141,6 @@ export default {
          */
         setUser: function(value){
             this.Chat.setNickname(value);
-            this.WelcomeShow = false;
             this.$data.mode = 'chat';
             this.$data.messageInput.disabled = false; //메시지 input창 활성화
         },
@@ -159,12 +161,16 @@ export default {
         /**
          * 채팅 모듈의 유저 정보 업데이트에 넣을 콜백
          */
-        setUserList : function(msg){
-            this.userList = msg;
+        setUserList : function(_msg){
+            this.userList = _msg;
         },
-        siderToggle : function(val = false){
-            console.log('Slider toggled ::',val);
-            this.RightsliderToggle = val;
+        siderToggle : function(_val = false){
+            console.log('Slider toggled ::',_val);
+            this.RightsliderToggle = _val;
+        },
+        LoginSuccess : function(_arr){
+            console.log('LoginSuccess!!',_arr)
+            this.$emit('LoginSuccess');
         },
     }
 };

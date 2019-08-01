@@ -2,7 +2,7 @@
     <transition>
     <div id="user-card-wrapper">
         <div id="user-card">
-            {{user.name}} :: {{ logindate }}
+            {{ user.name}} :: {{ user.status }}  - {{ logindate }}
         </div>
     </div>
     </transition>

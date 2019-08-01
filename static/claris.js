@@ -10,6 +10,7 @@ export default class Claris {
         this.user = { // 사용자 정보
             id: undefined,
             name: undefined,
+            token : undefined,
         };
         this.userList = []; // 회원 목록
 
@@ -19,14 +20,16 @@ export default class Claris {
 
     /**
      * 채팅 시작. 서버에서 이벤트 메시지 수신시 받을 콜백 함수 정의
-     * @param {chatMessage : Function, userList: Function} callbackFn 
+     * @param {chatMessage: Function, userList: Function, setUser: Function} callbackFn 
      */
     on(callbackFn = {
-        chatMessage : Function,
-        userList : Function,
+        _setUser : Function,
+        _chatMessage : Function,
+        _userList : Function,
     }){
-        this.callbackFn.chatMessage = callbackFn.chatMessage;
-        this.callbackFn.userList = callbackFn.userList;
+        this.callbackFn.setUser = callbackFn._setUser;
+        this.callbackFn.chatMessage = callbackFn._chatMessage;
+        this.callbackFn.userList = callbackFn._userList;
         
         let myClaris = this;
 
@@ -39,40 +42,56 @@ export default class Claris {
         })
 
         /**
+         * (이벤트 이름 : sendUserInfo) 서버에서 토큰을 포함한 유저 정보를 할당 받을때마다 실행할 이벤트
+         */
+        this.socket.on('sendUserInfo',function(rsp){
+            myClaris.log.push(rsp); // 로깅
+
+            myClaris.user = {
+                id: rsp.id,
+                name: rsp.name,
+                token: rsp.token,
+            };
+
+            // 유저 토큰을 웹스토리지에 저장
+            localStorage.setItem('userToken',myClaris.user.token);
+
+            // 유저 설정 완료 후 콜백 호출
+            myClaris.callbackFn.setUser(myClaris.user);
+        });
+
+        /**
          * (이벤트 이름 : chatMessage) 서버에서 채팅 메시지를 받을때마다 실행할 이벤트
          * type : json
          */
         this.socket.on('chatMessage',function(msg){
+            myClaris.log.push(msg); // 로깅
+
             myClaris.callbackFn.chatMessage(msg);
-            myClaris.log.push(msg);
         });
 
         /**
          * (이벤트 이름 : userList) 유저 접속, 연결해제시 서버에서 보내오는 유저 리스트
-         * type : json
+         * type : json (User Object)
          */
         this.socket.on('userList',function(msg){
+            myClaris.log.push(msg); // 로깅
+
             myClaris.userList = msg;
             myClaris.callbackFn.userList(msg);
-            myClaris.log.push(msg);
         });
     }
 
     // 닉네임 설정 메소드
     setNickname(value){
         this.socket.emit('setUserInfo', value); // 서버에 사용할 닉네임을 통보함
-
-        let socket_id = this.socket.id;
-        this.user = {
-            id: socket_id,
-            name: value,
-        };
     }
 
     // 메시지 발송 메소드
     SendChat(message){
+        this.log.push(message); // 로깅
+
         this.socket.emit('chatMessage', message);
-        this.log.push(message);
     }
 
     // 로그 확인 메소드

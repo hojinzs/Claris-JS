@@ -44,26 +44,20 @@ let userMessage = new Array(),
 /// Socket io Setting
 ////////////////////////
 io.on('connection', function (socket) {
-    let userToken = init.makeUserToken();
 
     // (소켓 열림) 유저 아이디를 소켓아이디로 설정
     let userSocketId = socket.id;
-    console.log('a user (soektid : ',userSocketId, ' token : ', userToken,') was connected');
+    console.log('a user (soektid : ',userSocketId,') was connected');
 
-    // // (테스트용) 사람이 오면 일단 테스트 메시지를 일단 날려본다. (어서오시게 두한이)
-    // function fourDollor(){
-    //     let fourDollor = new MsgParser;
-    //     return fourDollor.forDollor();        
-    // }
-    // io.emit('chatMessage',fourDollor());
 
-    // 유저 정보 설정
+    /**
+     * SocketIo Event Name :: setUserInfo
+     * 클라이언트에서 유저 정보 세팅을 요청
+     */
     socket.on('setUserInfo', function (data) {
         let newUser = UserList.Add({
-            "token" : userToken,
             "socketid" : userSocketId,
             "name" : data,
-            "logindate" : new Date()
         })
         let msg = new MsgParser;
         io.emit('chatMessage',msg.setSystemMessage("닉네임은 '"+data+"' 님이 접속하셨습니다."));
@@ -75,29 +69,39 @@ io.on('connection', function (socket) {
         io.emit('userList', UserList.List);
 
         // 로깅 (닉네임 세팅)
-        console.log('a user ('+userSocketId+') set nickname -> '+ data+' (live user :'+UserList.Connections +')');
+        console.log('a user ('+userSocketId+') set nickname -> '+ data+' , token ->',newUser.token,'(live user :'+UserList.Connections +')');
     });
 
-    // 유저가 메시지를 보냈을 때
+    /**
+     * SocketIo Event Name :: chatMessage
+     * 클라이언트에서 메시지를 발신함
+     */
     socket.on('chatMessage', function (msg) {
         let res = new MsgParser;
-        let user = UserList.getUserById(userSocketId);
+        let user = UserList.getUserBySocketId(userSocketId);
         io.emit('chatMessage',res.setSimpleText(user,msg));
 
         // 로깅
         console.log(user.name+'('+user.id+') :: '+ msg);
     });
 
-    // 유저 디스커텍트
+    /**
+     * SocketIo Event Name :: disconnect
+     * 클라이언트의 접속이 끊김
+     */
     socket.on('disconnect', function () {
+        // 해당 유저의 상태를 DISCONNECT로 바꾸고 유저 정보를 가져옴
+        let user = UserList.Disconnect(userSocketId);
 
-        let msg = new MsgParser;
+        // 메모리의 유저 목록에 등록된 사용자의 접속이 끊겼을 경우, 안내 메시지를 보냄
+        if(user != null){
+            let msg = new MsgParser;
+            io.emit('chatMessage',msg.setSystemMessage("'" + user.name + "' 님이 퇴장하셨습니다."));
+        }
 
-        //사용자 접속종료시 안내메시지 전송
-        io.emit('chatMessage',msg.setSystemMessage("'"+UserList.getUserById(userSocketId).name+"' 님이 퇴장하셨습니다."));
-        // 유저 배열에서 유저 삭제
-        UserList.Del(userSocketId);
-        io.emit('userList', UserList.List);
+        // // 유저 배열에서 유저 삭제 (코드 제거 예정)
+        // UserList.Del(userSocketId);
+        // io.emit('userList', UserList.List);
 
         // 로깅
         console.log('a user (',userSocketId,') disconnected (live user :'+UserList.Connections+')'); //서버 로그에 disconnect 메시지 표시
