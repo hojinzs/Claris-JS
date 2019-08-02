@@ -1,21 +1,20 @@
-// 유저 정보 클래스
-// 유저 정보는 다음 구조의 배열이다.
-// {
-//      "id": 0,
-//      "name": "system"
-// }
+/**
+ * Claris_User :: 접속한 유저들의 데이터를 관리하는 클래스.
+ * 유저 Object의 배열 및 접근 메소드로 이루어짐.
+ * @class
+ */
 
 let Common = require('./common')();
 class ClarisUser{
 
-    constructor(value){
+    constructor(){
         this.userList = [];
         this.seq = 0;
-    }
-
+    };
 
     /**
      * 연결, 인증 정보를 제외한 유저 목록을 반환한다.
+     * @returns {Array} 유저 목록 배열
      */
     get List(){
         let UserArray = new Array;
@@ -31,18 +30,20 @@ class ClarisUser{
         });
 
         return this.userList;
-    }
+    };
 
     /**
-     * 현재 접속중인 사람수를 반환한다.
+     * 현재 접속중인 (status = 'LIVE') 사람수를 반환한다
+     * @returns {Number} 접속중인 사람 수
      */
     get Connections(){
         return this.userList.filter(u => u.status == 'LIVE').length;
-    }
+    };
     
     /**
      * 메모리의 유저 목록에 유저 정보를 추가한다.
      * @param {Object} _val user 객체 
+     * @returns {Object} 생성된 유저 정보
      */
     Add(_val = Object){
         this.seq = this.seq + 1
@@ -64,7 +65,7 @@ class ClarisUser{
         console.log("HERE COMES A NEW USER => ",newUser);
 
         return newUser;
-    }
+    };
 
     /**
      * 메모리의 유저 목록에서 유저 정보를 삭제한다.
@@ -82,11 +83,12 @@ class ClarisUser{
         if(idx != -1){
             this.userList.splice(idx,1);
         }
-    }
+    };
 
     /**
      * 메모리의 유저 목록에서 sockectId와 일치하는 유저의 접속 상태(status)를 DISCONNECT로 변경하고 연결해제 일시를 기록한다.
-     * @param {String} _socketId 
+     * @param {String} _socketId 소켓 아이디
+     * @returns {Object} 유저 정보 반환
      */
     Disconnect(_socketId){
 
@@ -102,12 +104,13 @@ class ClarisUser{
         console.log("USER DISCONNECT => ",this.userList[idx]);
 
         return this.userList[idx];
-    }
+    };
 
     /**
      * 메모리의 유저 목록에서 socketId와 일치하는 유저를 가져온다.
      * @param {String} _socketId 유저의 소켓 id string
      * @param {Boolean} _MustReturn 필수 리턴 여부
+     * @returns {Object} 유저 정보 반환
      */
     getUserBySocketId(_socketId,_MustReturn = true){
 
@@ -128,8 +131,13 @@ class ClarisUser{
         }
 
         return user;
-    }
+    };
 
+    /**
+     * 메모리의 유저 목록에서 토큰값과 일치하는 유저 정보를 가져온다.
+     * @param {String} _token 유저 토큰값
+     * @returns {Object} 유저 정보 반환
+     */
     getUserByToken(_token){
         // 유저 배열에서 토큰값과 일치하는 유저 정보를 가져온다.
         let user = this.userList.find(function(n){
@@ -137,8 +145,8 @@ class ClarisUser{
         })
 
         // 없다면 null을 리턴
-        return user
-    }
+        return user;
+    };
 
 }
 
