@@ -6,10 +6,6 @@
 // }
 
 class Clarisfns{
-    //유저 토큰 생성
-    makeUserToken() {
-        return new Date().toISOString().slice(0,10) + "-" + Math.random().toString(36).substr(2, 9);
-    }
 }
 
 module.exports = function () {
