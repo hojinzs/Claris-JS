@@ -6,12 +6,11 @@ var io = require('socket.io')(http);
 
 var isConnected = true;
 
-
 // /dist, /public 폴더를 스태틱 폴더로 지정
 app.use('/dist', express.static('dist'));
 
 ////////////////////////
-/// Initialize
+/// Initialize0
 ////////////////////////
 const Common = require('./middleware/common');
 let init = new Common;

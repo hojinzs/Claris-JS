@@ -4,6 +4,8 @@
  * @class
  */
 
+const uuidv4 = require('uuid/v4');
+
 let Common = require('./common')();
 class ClarisUser{
 
@@ -52,7 +54,7 @@ class ClarisUser{
         let newUser = {
             id : this.seq,
             name : _val.name, // 이름
-            token: Common.makeUserToken(), // 고유 토큰 생성
+            token: uuidv4(), // 토큰
             socketid : _val.socketid, // 접속중인 소켓 id
             status : 'LIVE', // 접속 상태. (LIVE|DISCONNECT)
             logindate : new Date(), // 접속 일시
