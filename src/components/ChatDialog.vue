@@ -31,7 +31,7 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
     .dialog-wrapper {width: 100%; display: block; overflow: hidden;}
     .dialog {margin:10px; min-width: 260px; max-width: 520px; width: 75%; float: left;}
     .dialog .dialog-text {background-color: #d1e0e0; padding: 15px; border-radius: 5px; margin-bottom: 5px;}

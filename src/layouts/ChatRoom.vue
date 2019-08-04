@@ -175,7 +175,7 @@ export default {
     }
 };
 </script>
-<style>
+<style scoped>
     #chat-room{
         /* position: relative; */
         top: 0px;

@@ -65,7 +65,7 @@ export default {
     },
 };
 </script>
-<style>
+<style scoped>
     #message-input {padding: 3px; height: 100%; width: 100%; overflow: hidden; position: relative;}
     #message-input form {line-height: 100%; height: 100%; width: 100%; overflow: hidden; position: relative; z-index: 10;}
     #message-input input {border: 1px grey solid; padding: 10px; left:0px; height: 100%; width: 100%; padding-right: 100px; border-radius: 5px}

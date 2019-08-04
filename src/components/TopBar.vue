@@ -13,7 +13,7 @@ export default {
   methods: {}
 };
 </script>
-<style>
+<style scoped>
 #top-bar {
   background-color: white;
   top: 0;
