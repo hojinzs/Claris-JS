@@ -2,7 +2,7 @@
     <transition>
     <div id="user-card-wrapper">
         <div id="user-card">
-            {{ user.name}} :: {{ user.status }}  - {{ logindate }}
+            {{ user.name}} :: {{ connection_status }}  - {{ logindate }}
         </div>
     </div>
     </transition>
@@ -18,6 +18,14 @@ export default {
     data: function(){
         return {
             logindate: moment(this.user.logindate).fromNow()
+        }
+    },
+    computed: {
+        connection_status(){
+            if(this.user.connect == 1){
+                return 'CONNECT'
+            };
+            return 'DISCONNECT'
         }
     },
     methods: {

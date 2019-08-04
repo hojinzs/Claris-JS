@@ -77,6 +77,9 @@ export default class Claris {
         this.socket.on('userList',function(msg){
             myClaris.log.push(msg); // 로깅
 
+            // 유저리스트를 정렬한다. (Live 우선, id 빠른 순 우선)
+            
+
             myClaris.userList = msg;
             myClaris.callbackFn.userList(msg);
         });

@@ -126,7 +126,7 @@ export default {
          * 현재 접속중인 유저 수 (STATUS == 'LIVE')
          */
         userConnections : function(){
-            return this.userList.filter(u => u.status == 'LIVE').length;
+            return this.userList.filter(u => u.connect == 1).length;
         },
     },
     methods: {

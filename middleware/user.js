@@ -25,9 +25,9 @@ class ClarisUser{
             UserArray.push({
                 id : user.id,
                 name : user.name,
-                status : user.status,
+                connect : user.connect,
                 logindate : user.logindate,
-                disconnect : user.disconnect,
+                logoutdate : user.logoutdate,
             })
         });
 
@@ -56,9 +56,9 @@ class ClarisUser{
             name : _val.name, // 이름
             token: uuidv4(), // 토큰
             socketid : _val.socketid, // 접속중인 소켓 id
-            status : 'LIVE', // 접속 상태. (LIVE|DISCONNECT)
+            connect : 1, // 접속 상태. (LIVE|DISCONNECT)
             logindate : new Date(), // 접속 일시
-            disconnect : null, // 접속이 끊긴 일시
+            logoutdate : null, // 접속이 끊긴 일시
         }
 
         // userList 배열에 넣는다
@@ -88,7 +88,30 @@ class ClarisUser{
     };
 
     /**
-     * 메모리의 유저 목록에서 sockectId와 일치하는 유저의 접속 상태(status)를 DISCONNECT로 변경하고 연결해제 일시를 기록한다.
+     * 메모리의 유저 목록에서 token이 일치하는 유저의 접속 상태(connect)를 1로 변경하고 소켓id와 로그인 일시를 기록한다.
+     * @param {String} _token 유저 토큰
+     * @param {String} _socketId 소켓 id
+     * @returns {Object} 유저 정보 반환
+     */
+    Connect(_token,_socketId){
+        // 유저 배열에서 토큰이 일치하는 유저의 인덱스를 가져온다.
+        let idx = this.userList.findIndex(i => i.token == _token);
+
+        // 찾았다면, 상태를 갱신함.
+        if(idx != -1){
+            this.userList[idx].connect = 1;
+            this.userList[idx].logindate = new Date();
+            this.userList[idx].socketid = _socketId;
+        }
+
+        console.log("USER reCONNECT => ",this.userList[idx]);
+
+        return this.userList[idx];
+    };
+
+    
+    /**
+     * 메모리의 유저 목록에서 sockectId와 일치하는 유저의 접속 상태(connect)를 0으로 변경하고 연결해제 일시를 기록한다.
      * @param {String} _socketId 소켓 아이디
      * @returns {Object} 유저 정보 반환
      */
@@ -99,8 +122,8 @@ class ClarisUser{
 
         // 찾았다면, 상태를 갱신함.
         if(idx != -1){
-            this.userList[idx].status = 'DISCONNECT';
-            this.userList[idx].disconnect = new Date();
+            this.userList[idx].connect = 0;
+            this.userList[idx].logoutdate = new Date();
         }
 
         console.log("USER DISCONNECT => ",this.userList[idx]);
