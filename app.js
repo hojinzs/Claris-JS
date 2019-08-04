@@ -98,9 +98,8 @@ io.on('connection', function (socket) {
             io.emit('chatMessage',msg.setSystemMessage("'" + user.name + "' 님이 퇴장하셨습니다."));
         }
 
-        // // 유저 배열에서 유저 삭제 (코드 제거 예정)
-        // UserList.Del(userSocketId);
-        // io.emit('userList', UserList.List);
+        // 변동된 유저 리스트를 모든 사용자에게 전달
+        io.emit('userList', UserList.List);
 
         // 로깅
         console.log('a user (',userSocketId,') disconnected (live user :'+UserList.Connections+')'); //서버 로그에 disconnect 메시지 표시
