@@ -72,16 +72,28 @@ export default class Claris {
 
         /**
          * (이벤트 이름 : userList) 유저 접속, 연결해제시 서버에서 보내오는 유저 리스트
-         * type : json (User Object)
+         * type : json (User Object Array)
          */
         this.socket.on('userList',function(msg){
             myClaris.log.push(msg); // 로깅
 
             // 유저리스트를 정렬한다. (Live 우선, id 빠른 순 우선)
-            
+            let sortedList = msg.sort(function(a, b) {
+                var o1 = b['connect'];
+                var o2 = a['connect'];
+                var p1 = a['id'];
+                var p2 = b['id'];
+             
+                if (o1 < o2) return -1;
+                if (o1 > o2) return 1;
+                if (p1 < p2) return -1;
+                if (p1 > p2) return 1;
+             
+                return 0;
+             });
 
-            myClaris.userList = msg;
-            myClaris.callbackFn.userList(msg);
+            myClaris.userList = sortedList;
+            myClaris.callbackFn.userList(sortedList);
         });
     }
 
