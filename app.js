@@ -32,8 +32,7 @@ app.get('/', function (req, res) {
 const MsgParser = require('./static/messageHelper');
 
 // 유저 정보 저장, 검색, 사용용 미들웨어
-const User = require('./middleware/user');
-let UserList = new User;
+const UserList = require('./middleware/user')();
 
 // 기타 (나중에 활용하려고 모아둠)
 let userMessage = new Array(),
@@ -44,10 +43,17 @@ let userMessage = new Array(),
 ////////////////////////
 io.on('connection', function (socket) {
 
+    socket.on('getUserInfo', function(data) {
+        let token = data,
+            reSocketId = socket.id,
+            reConnUser = UserList.Connect(token, reSocketId);
+
+        io.to(reSocketId).emit('sendUserInfo', reConnUser);
+    });
+
     // (소켓 열림) 유저 아이디를 소켓아이디로 설정
     let userSocketId = socket.id;
     console.log('a user (soektid : ',userSocketId,') was connected');
-
 
     /**
      * SocketIo Event Name :: setUserInfo
@@ -98,8 +104,9 @@ io.on('connection', function (socket) {
             io.emit('chatMessage',msg.setSystemMessage("'" + user.name + "' 님이 퇴장하셨습니다."));
         }
 
-        // 변동된 유저 리스트를 모든 사용자에게 전달
-        io.emit('userList', UserList.List);
+        // // 유저 배열에서 유저 삭제 (코드 제거 예정)
+        // UserList.Del(userSocketId);
+        // io.emit('userList', UserList.List);
 
         // 로깅
         console.log('a user (',userSocketId,') disconnected (live user :'+UserList.Connections+')'); //서버 로그에 disconnect 메시지 표시
