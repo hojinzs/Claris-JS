@@ -88,13 +88,6 @@ export default {
                 popupMessage : "type message",
                 button : '전송',
             },
-            userInput : {
-                disabled : false,
-                default : "",
-                placeholder : "5자 이내",
-                popupMessage : "닉네임을 입력해주세요",
-                button : '설정',
-            },
             mode : "user",
             Chat : {},
             currentTime : {},
@@ -102,19 +95,13 @@ export default {
         }
     },
     mounted: function(){
-        this.Chat = new ChatController();
-        this.Chat.on({
+        this.Chat = new ChatController({
             _setUser : this.LoginSuccess,
             _chatMessage : this.receive,
             _userList : this.setUserList,
+            _connectLost : this.connectLost,
         });
         console.log("Vue Modile 'ChatApp' was Mounted!");
-
-        // Welcome 메시지
-        let getMessage = new MessageHelper;
-        let SetMsg = getMessage.setSystemMessage("당신의 닉네임을 입력해주세요.");
-        SetMsg.id = this.messageList.length; //message 에 key(id) 넣기
-        this.messageList.push(SetMsg);
     },
     watch: {
         userList: function(){
@@ -141,8 +128,6 @@ export default {
          */
         setUser: function(value){
             this.Chat.setNickname(value);
-            this.$data.mode = 'chat';
-            this.$data.messageInput.disabled = false; //메시지 input창 활성화
         },
         /**
          * 채팅 모듈의 메시지 수신 이벤트에 넣을 콜백
@@ -164,13 +149,24 @@ export default {
         setUserList : function(_msg){
             this.userList = _msg;
         },
+        LoginSuccess : function(_arr){
+            console.log('LoginSuccess!!',_arr)
+
+            this.$data.mode = 'chat';
+            this.$data.messageInput.disabled = false; //메시지 input창 활성화
+
+            this.$emit('LoginSuccess');
+            this.$emit('Connction',1);
+        },
+        connectLost : function(){
+            this.$emit('Connction',0);
+        },
+        /**
+         * 오른쪽 슬라이드 메뉴 토글
+         */
         siderToggle : function(_val = false){
             console.log('Slider toggled ::',_val);
             this.RightsliderToggle = _val;
-        },
-        LoginSuccess : function(_arr){
-            console.log('LoginSuccess!!',_arr)
-            this.$emit('LoginSuccess');
         },
     }
 };

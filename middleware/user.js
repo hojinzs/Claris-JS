@@ -166,7 +166,7 @@ class ClarisUser{
     getUserByToken(_token){
         // 유저 배열에서 토큰값과 일치하는 유저 정보를 가져온다.
         let user = this.userList.find(function(n){
-            return n.socketid == __token;
+            return n.token == _token;
         })
 
         // 없다면 null을 리턴

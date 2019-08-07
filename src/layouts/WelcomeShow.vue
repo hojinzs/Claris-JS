@@ -4,14 +4,18 @@
         v-show="show">
         <div id="app-welcome-wrapper">
             <div id="app-welcome-contents">
-                <div class="header">닉네임을 입력해주세요.</div>
-                <form v-on:submit.prevent = "submit">
-                    <input
-                        class="cl_input"
-                        v-model='text'
-                        autocomplete="off"/>
-                    <button class="cl_button cl_button_blue">설정</button>
-                </form>
+
+                <div v-if="mode == 'new'">
+                    <div class="header">닉네임을 입력해주세요.</div>
+                    <form v-on:submit.prevent = "newUser">
+                        <input
+                            class="cl_input"
+                            v-model='text'
+                            autocomplete="off"/>
+                        <button class="cl_button cl_button_blue">설정</button>
+                    </form>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -20,9 +24,18 @@
 
 <script>
 export default {
-    props: ['show'],
+    props: ['show','UserInfo'],
+    computed: {
+        setMode(){
+            if(this.UserInfo == Object){
+                return 'reconnect';
+            }
+            return 'new';
+        }
+    },
     data: function(){
         return {
+            mode : 'new',
             text : ''
         }
     },
@@ -33,16 +46,21 @@ export default {
         Hide(){
             this.$emit('siderToggle')
         },
-        submit(){ // 버튼이 눌러졌을때 실행할 액션
+        // 새로운 유저 정보를 사용
+        newUser(){
             // 빈값이면 그냥 팅긴다
             if(this.text == '' || null) return;
 
             // 검증 통과 후 상위 컴포넌트에서 submit 이벤트를 받아 실행한다.
-            this.$emit('submit',this.text);
+            this.$emit('newUser',this.text);
 
             // 입력상자 초기화
             this.text = "";
         },
+        // 기존 유저 정보를 사용
+        oldUser(){
+
+        }
     }
 }
 </script>

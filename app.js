@@ -43,17 +43,9 @@ let userMessage = new Array(),
 ////////////////////////
 io.on('connection', function (socket) {
 
-    socket.on('getUserInfo', function(data) {
-        let token = data,
-            reSocketId = socket.id,
-            reConnUser = UserList.Connect(token, reSocketId);
-
-        io.to(reSocketId).emit('sendUserInfo', reConnUser);
-    });
-
     // (소켓 열림) 유저 아이디를 소켓아이디로 설정
     let userSocketId = socket.id;
-    console.log('a user (soektid : ',userSocketId,') was connected');
+    console.log('a user (socktid : ',userSocketId,') was connected');
 
     /**
      * SocketIo Event Name :: setUserInfo
@@ -75,6 +67,27 @@ io.on('connection', function (socket) {
 
         // 로깅 (닉네임 세팅)
         console.log('a user ('+userSocketId+') set nickname -> '+ data+' , token ->',newUser.token,'(live user :'+UserList.Connections +')');
+    });
+
+    /**
+     * SocketIo Event Name :: getUserInfo
+     * 클라이언트에서 발급받은 토큰으로 이전에 접속한 유저 정보를 요청
+     */
+    socket.on('getUserInfo', function(data) {
+
+        // 기존에 해당 토큰으로 연결된 소켓이 있다면, 접속을 끊는다.
+        if(ConnUser = UserList.getUserByToken(data)){
+            io.to(ConnUser.socketid).emit('disconnect');
+        }
+
+        let token = data,
+            reSocketId = socket.id,
+            reConnUser = UserList.Connect(token, reSocketId);
+
+        io.to(reSocketId).emit('sendUserInfo', reConnUser);
+
+        //접속된 사용자 정보를 UserList로 전송
+        io.emit('userList', UserList.List);
     });
 
     /**
@@ -103,9 +116,6 @@ io.on('connection', function (socket) {
             let msg = new MsgParser;
             io.emit('chatMessage',msg.setSystemMessage("'" + user.name + "' 님이 퇴장하셨습니다."));
         }
-
-        // // 유저 배열에서 유저 삭제 (코드 제거 예정)
-        // UserList.Del(userSocketId);
 
         // 변동된 유저 목록을 모두에게 전달
         io.emit('userList', UserList.List);
