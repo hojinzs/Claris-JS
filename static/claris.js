@@ -25,21 +25,11 @@ export default class Claris {
             connectLost : _callbackFn._connectLost,
         };
 
-        // 연결 상태
-        this.connect = 0;
-
-        // 사용자 정보
-        this.user = { // 사용자 정보
-            id: undefined,
-            name: undefined,
-            token : undefined,
-        };
-
-        // 접속자 정보 배열
-        this.userList = [];
-        
-        // 채팅 로그
-        this.log = [];
+        // 프로퍼티 선언
+        this.connect = 0; // 접속 상태 (0,1)
+        this.userList = []; // 접속자 정보 배열
+        this.log = []; // 채팅 로그
+        this.user = this.getUserInfo_by_Local(); // 로컬 스토리지에 유저 정보가 있다면, 해당 유저 정보를 가져온다. 없다면 null
         
         //////////////////////////
         // 리스닝 이벤트 등록 시작
@@ -51,15 +41,8 @@ export default class Claris {
              */
             this.socket.on('connect',function(){
                 console.log("SOCKET ID:::",myClaris.socket.id);
-                this.connect = 1;
+                myClaris.connect = 1;
                 myClaris.log.push("SOCKET ID :"+myClaris.socket.id)
-
-                // 로컬 스토리지에 유저 토큰이 있다면, 해당 토큰으로 접속 시도
-                let CurrentToken = localStorage.getItem('userToken');
-                if(CurrentToken != undefined){
-                    console.log('Get User Info use Current Token!!')
-                    myClaris.getUserInfo(CurrentToken);
-                }
             })
 
             /**
@@ -68,7 +51,11 @@ export default class Claris {
             this.socket.on('sendUserInfo',function(rsp){
                 myClaris.log.push(rsp); // 로깅
 
-                if(rsp == null) return; //유저 정보가 아무것도 안왔다면 그냥 return
+                //유저 정보가 아무것도 안왔다면 유저 정보를 날리고 return
+                if(rsp == null){
+                    myClaris.clearUserInfo();
+                    return;
+                }
 
                 myClaris.user = {
                     id: rsp.id,
@@ -77,7 +64,8 @@ export default class Claris {
                 };
 
                 // 유저 토큰을 웹스토리지에 저장
-                localStorage.setItem('userToken',myClaris.user.token);
+                // localStorage.setItem('userToken',myClaris.user.token);
+                localStorage.setItem('ChatUser',JSON.stringify(myClaris.user));
 
                 // 유저 설정 완료 후 콜백 호출
                 myClaris.callbackFn.setUser(myClaris.user);
@@ -89,6 +77,12 @@ export default class Claris {
              */
             this.socket.on('chatMessage',function(msg){
                 myClaris.log.push(msg); // 로깅
+
+                if(myClaris.user != null && myClaris.user.id == msg.user.id){
+                    msg.user.currentUser = true;
+                } else {
+                    msg.user.currentUser = false;
+                }
 
                 myClaris.callbackFn.chatMessage(msg);
             });
@@ -135,25 +129,68 @@ export default class Claris {
         console.log("Chat Module 'Claris' was Imported!");
     }
 
-    // 닉네임 설정 메소드
-    setNickname(value){
-        this.socket.emit('setUserInfo', value); // 서버에 사용할 닉네임을 통보함
+    /**
+     * 로컬 스토리지에 저장된 유저 정보 삭제
+     */
+    clearUserInfo(){
+        localStorage.removeItem('ChatUser');
+        this.user = null;
+        // 유저 정보 삭제 후 콜백 호출
+        this.callbackFn.setUser(this.user);
     }
 
+    /**
+     * 서버에 사용할 닉네임을 통보하는 이벤트 발송
+     * @param {String} _nickname 설정할 닉네임
+     */
+    setNickname(_nickname){
+        this.socket.emit('setUserInfo', _nickname);
+    }
 
     /**
      * 토큰값을 이용해 기존에 받아온 유저 정보를 가져옴
      * @param {String} _token 로컬 스토리지에서 받아온 토큰값
      */
-    getUserInfo(_token){
-        this.socket.emit('getUserInfo', _token); // 서버에 사용할 닉네임을 통보함
+    getUserInfo_to_Server(_token = null){
+        let token = _token;
+
+        //토큰값이 넘어오지 않았다면, 유저 객제의 토큰값을 가져옴.
+        if(token == null && this.user != null){
+            token = this.user.token
+        }
+
+        this.socket.emit('getUserInfo', token);
     }
 
-    // 메시지 발송 메소드
-    SendChat(message){
-        this.log.push(message); // 로깅
+    /**
+     * 로컬 스토리지에 저장된 유저 정보를 객체에 세팅하고 반환한다.
+     * @returns {Object} 유저 정보 객체 or null
+     */
+    getUserInfo_by_Local(){
+        let userInfo = null;
 
-        this.socket.emit('chatMessage', message);
+        let CurrentUser = localStorage.getItem('ChatUser');
+        if(CurrentUser != null){
+            try {
+                userInfo = JSON.parse(CurrentUser);
+            } catch (error) {
+                console.log('Invaild Data',error);
+            }
+        };
+
+        return userInfo;
+    }
+
+    /**
+     * 메시지 발송 이벤트(chatMessage) 발송
+     * @param {String} _message 
+     */
+    SendChat(_message){
+        this.log.push(_message); // 로깅
+
+        // 향후 메시지 구조체에 내용을 태울 수 있도록 develop
+
+        this.socket.emit('chatMessage', _message);
     }
 
     // 로그 확인 메소드

@@ -102,6 +102,9 @@ export default {
             _connectLost : this.connectLost,
         });
         console.log("Vue Modile 'ChatApp' was Mounted!");
+
+        //객체 등록 후 상위 컴포넌트로 유저 정보를 보낸다.
+        this.$emit('getCurrentUserInfo',this.Chat.user);
     },
     watch: {
         userList: function(){
@@ -130,16 +133,17 @@ export default {
             this.Chat.setNickname(value);
         },
         /**
+         * 기존 유저 정보 사용
+         */
+        useCurrentUser: function(){
+            this.Chat.getUserInfo_to_Server();
+        },
+        /**
          * 채팅 모듈의 메시지 수신 이벤트에 넣을 콜백
          */
         receive: function(response){
             console.log('SERVER RESPONSE >>',response); // (개발용) 서버 메시지 로그
 
-            if(this.Chat.user.id != undefined && this.Chat.user.id == response.user.id){
-                response.user.currentUser = true;
-            } else {
-                response.user.currentUser = false;
-            }
             response.id = this.messageList.length + 1; //message 에 key(id) 넣기
             this.messageList.push(response)
         },
@@ -150,13 +154,18 @@ export default {
             this.userList = _msg;
         },
         LoginSuccess : function(_arr){
-            console.log('LoginSuccess!!',_arr)
 
-            this.$data.mode = 'chat';
-            this.$data.messageInput.disabled = false; //메시지 input창 활성화
+            if(_arr != null){
+                console.log('LoginSuccess!!',_arr)
 
-            this.$emit('LoginSuccess');
-            this.$emit('Connction',1);
+                this.$data.mode = 'chat';
+                this.$data.messageInput.disabled = false; //메시지 input창 활성화
+
+                this.$emit('LoginSuccess');
+                this.$emit('Connction',1);
+            };
+
+            this.$emit('getCurrentUserInfo',this.Chat.user);
         },
         connectLost : function(){
             this.$emit('Connction',0);
@@ -167,6 +176,12 @@ export default {
         siderToggle : function(_val = false){
             console.log('Slider toggled ::',_val);
             this.RightsliderToggle = _val;
+        },
+        /**
+         * 유저 정보를 지움
+         */
+        dropUserData : function(){
+            this.Chat.clearUserInfo();
         },
     }
 };
