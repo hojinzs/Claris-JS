@@ -45,7 +45,28 @@ io.on('connection', function (socket) {
 
     // (소켓 열림) 유저 아이디를 소켓아이디로 설정
     let userSocketId = socket.id;
+    let chatRoomId = null;
     console.log('a user (socktid : ',userSocketId,') was connected');
+
+    /**
+     * SocketIo Event Name :: makeNewRoom
+     * 클라이언트에서 채팅방 생성을 요청
+     */
+    socket.on('makeNewRoom', function(data) {
+        chatRoomId = data; //room id
+        socket.join(chatRoomId); //client에서 전달받은 chatRoomId로 채팅방을 생성
+        console.log('chat room create success. (room id : ', chatRoomId);
+    });
+
+    /**
+     * SocketIo Event Name :: leaveRoom
+     * 클라이언트에서 채팅방 나가기를 요청
+     */
+    socket.on('leaveRoom',function(){
+        socket.leave(chatRoomId); //leave room
+        io.to(chatRoomId).emit('resLeaveRoom'); //멤버가 방을 나갈때마다 client로 전달함
+        console.log('leave room success.');
+    });
 
     /**
      * SocketIo Event Name :: setUserInfo
