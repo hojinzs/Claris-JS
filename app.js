@@ -3,6 +3,7 @@ var app = express();
 
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
+var port = 3001;
 
 
 // /dist, /public 폴더를 스태틱 폴더로 지정
@@ -85,6 +86,6 @@ io.on('connection', function (socket) {
     });
 });
 
-http.listen(3000, function () {
-    console.log('listening on *:3000');
+http.listen(port, function () {
+    console.log(`listening on *:${port}`);
 });

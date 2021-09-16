@@ -10,7 +10,7 @@ export default class Claris {
             nickname: '',
         };
         this.dialog = "";
-        this.socket = io('http://localhost:3000');
+        this.socket = io('http://localhost:3001');
 
         // 모듈 정상 임포트 완료
         console.log("Chat Module 'Claris' was Imported!");
